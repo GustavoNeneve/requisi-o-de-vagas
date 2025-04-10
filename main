@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Vaga</title>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="formulario.css">
+  </head>
+  <body>
+    <!-- Removendo a barra de progresso -->
+    <!-- <div class="container separator">
+      <ul class="progress-tracker progress-tracker--vertical">
+        <li class="progress-step is-complete">
+          <div class="progress-marker"></div>
+          <div class="progress-text">
+            <h4 class="progress-title">Dados Básicos</h4>
+            <p>Preencha as informações iniciais da vaga.</p>
+          </div>
+        </li>
+        <li class="progress-step is-complete">
+          <div class="progress-marker"></div>
+          <div class="progress-text">
+            <h4 class="progress-title">Datas e Horários</h4>
+            <p>Defina as datas e horários para a vaga.</p>
+          </div>
+        </li>
+        <li class="progress-step is-active" aria-current="step">
+          <div class="progress-marker"></div>
+          <div class="progress-text">
+            <h4 class="progress-title">Impulsionamento</h4>
+            <p>Configure o alcance e impulsionamento da vaga.</p>
+          </div>
+        </li>
+      </ul>
+    </div> -->
+
+    <!-- Texto de reforço logo no início -->
+    <!-- Reforça o motivo pelo qual o formulário é importante e estimula o preenchimento com mais atenção -->
+    <p><strong>📢 Este formulário garante que sua vaga seja divulgada com
+        rapidez e visibilidade.</strong></p>
+    <p><strong>❗Vagas sem esse envio podem demorar mais para irem ao
+        ar.</strong></p>
+
+    <!-- Microcopy explicativa com linguagem leve -->
+    <!-- Essa dica diminui dúvidas e melhora a qualidade das informações enviadas pelo usuário -->
+    <p class="dica">📌 Essa etapa ajuda o marketing a entender melhor como
+      divulgar sua vaga.</p>
+
+    <form id="vagaForm" class="form-grid">
+      <section id="sessao1" class="form-section active"></section>
+        <h2>📂 Sessão 1 - Dados da Vaga</h2>
+        <!-- Campos obrigatórios com * -->
+        <label
+          title="Insira o nome completo do analista respons&aacute;vel">Nome do
+          analista:<span class="required"></span><span
+            class="info-icon">ℹ️</span></label>
+        <input name="analista" required type="text" />
+
+        <label title="Insira o n&uacute;mero de WhatsApp com DDD">WhatsApp:<span
+            class="required"></span><span class="info-icon">ℹ️</span></label>
+        <input name="whatsapp" required type="tel" />
+
+        <div id="avisoLogo" style="display: none;">
+          📌 Para melhor divulgação, envie o logo em formato vetorial (AI, SVG
+          ou EPS). Caso não tenha, podemos usar versão JPG/PNG.
+        </div>
+        <label title="Selecione se a logo da empresa pode ser divulgada">Pode
+          divulgar a logo?<span class="required"></span><span
+            class="info-icon">ℹ️</span></label>
+        <select id="divulgaLogo" required>
+          <option value>Selecione</option>
+          <option value="Sim">Sim</option>
+          <option value="N&atilde;o">N&atilde;o</option>
+        </select>
+        <div id="nomeEmpresaContainer" style="display: none;">
+          <label title="Insira o nome da empresa">Nome da empresa:<span
+              class="info-icon">ℹ️</span></label>
+          <input name="empresa" type="text" />
+        </div>
+        <label
+          title="Selecione se a vaga &eacute; para produ&ccedil;&atilde;o">&Eacute;
+          produ&ccedil;&atilde;o?<span class="required"></span><span
+            class="info-icon">ℹ️</span></label>
+        <select id="producao" required>
+          <option value>Selecione</option>
+          <option value="Sim">Sim</option>
+          <option value="N&atilde;o">N&atilde;o</option>
+        </select>
+        <p id="avisoMarketing" style="display: none;">⚠️ O marketing N&Atilde;O
+          est&aacute; permitido divulgar vagas de produ&ccedil;&atilde;o sem
+          logo.</p>
+        <label>Comparecimento presencial?</label>
+        <select id="presencial" required>
+          <option value>Selecione</option>
+          <option value="RHBrasil">RHBrasil</option>
+          <option value="Outro">Outro lugar</option>
+        </select>
+        <!-- Placeholder com exemplo no campo de local -->
+        <!-- Um link modelo ajuda a evitar erros de preenchimento e dá clareza sobre o que se espera -->
+        <div id="outroLugar" style="display: none;">
+          <label>Local para comparecer (Google Maps link):</label>
+          <input name="local" required type="url"
+            placeholder="https://goo.gl/maps/xyz123" />
+        </div>
+        <div id="eventoContainer" style="display: none;">
+          <label>&Eacute; evento/feir&atilde;o/mutir&atilde;o?</label>
+          <select name="evento">
+            <option value="N&atilde;o">N&atilde;o</option>
+            <option value="Feir&atilde;o">Feir&atilde;o</option>
+            <option value="Mutir&atilde;o">Mutir&atilde;o</option>
+          </select>
+        </div>
+        <label>Nome do cargo:<span class="required"></span></label>
+        <input name="cargo" required type="text" />
+        <label
+          title="Se não tiver data definida, o padrão será de Segunda à Sexta">Tem
+          data definida?<span class="required"></span><span
+            class="info-icon">ℹ️</span></label>
+        <select id="temDataDefinida" required>
+          <option value>Selecione</option>
+          <option value="Sim">Sim</option>
+          <option value="Não">Não</option>
+        </select>
+
+        <div id="datasContainer" style="display: none;">
+          <div class="tipo-container"></div>
+            <label><input type="radio" name="tipoData" value="unico" checked />
+              Data única</label>
+            <label><input type="radio" name="tipoData" value="intervalo" />
+              Intervalo</label>
+          </div>
+
+          <div id="dataUnica">
+            <div id="datasUnicas">
+              <div class="campo-data">
+                <label>Data:</label>
+                <input type="date" name="datas[]" required />
+                <span class="remove-btn"
+                  onclick="removerData(this)">&times;</span>
+              </div>
+            </div>
+            <button type="button" onclick="adicionarData()">+ Adicionar
+              data</button>
+          </div>
+
+          <div id="dataIntervalo" style="display: none;">
+            <div class="campo-intervalo">
+              <label>De</label>
+              <input type="date" name="dataInicio[]" required />
+              <label>até</label>
+              <input type="date" name="dataFim[]" required />
+              <span class="remove-btn"
+                onclick="removerIntervalo(this)">&times;</span>
+            </div>
+            <button type="button" onclick="adicionarIntervalo()">+ Adicionar
+              intervalo</button>
+          </div>
+        </div>
+        <label title="Se não tiver horário definido, o padrão será das 7:30 às 17:00">Tem horário definido?<span class="required"></span><span class="info-icon">ℹ️</span></label>
+        <select id="temHorarioDefinido" required>
+          <option value="">Selecione</option>
+          <option value="Sim">Sim</option>
+          <option value="Não">Não</option>
+        </select>
+
+        <div id="horariosContainer" style="display: none;">
+          <div class="tipo-container">
+            <label><input type="radio" name="tipoHorario" value="unico" checked /> Horário único</label>
+            <label><input type="radio" name="tipoHorario" value="intervalo" /> Intervalo</label>
+          </div>
+
+          <div id="horarioUnico">
+            <div class="campo-horario">
+              <label>Horário:</label>
+              <input type="time" name="horarios[]" required />
+              <span class="remove-btn" onclick="removerHorario(this)">&times;</span>
+            </div>
+            <button type="button" onclick="adicionarHorario()">+ Adicionar horário</button>
+          </div>
+
+          <div id="horarioIntervalo" style="display: none;">
+            <div class="campo-intervalo">
+              <label>Das</label>
+              <input type="time" name="horaInicio" required />
+              <label>às</label>
+              <input type="time" name="horaFim" required />
+            </div>
+          </div>
+        </div>
+        <!-- Placeholder sugestivo para o número de vagas -->
+        <!-- Dar exemplos visuais torna o campo mais intuitivo e reduz dúvidas de preenchimento -->
+        <label>Quantas vagas:<span class="required"></span></label>
+        <input name="vagas" required type="number"
+          placeholder="Ex: 1, 3, 10 ou 400" />
+        <label>Benef&iacute;cios:<span class="optional"></span></label>
+        <textarea name="beneficios"></textarea>
+        <label>Requisitos:<span class="optional"></span></label>
+        <textarea name="requisitos"></textarea>
+        <label>Turnos:<span class="optional"></span></label>
+        <input name="turnos" type="text" />
+        <label>&Eacute; para Joinville?<span class="required"></span></label>
+        <select id="joinville" required>
+          <option value>Selecione</option>
+          <option value="Sim">Sim</option>
+          <option value="N&atilde;o">N&atilde;o</option>
+        </select>
+        <div id="cidadeOutras" style="display: none;">
+          <label>Qual cidade?</label>
+          <input name="outraCidade" required type="text" />
+        </div>
+        <!-- Texto informal e orientado no campo de notas -->
+        <!-- Estimula o preenchimento com informações valiosas que muitas vezes seriam esquecidas -->
+        <label>Notas adicionais (algo que só você sabe e ajuda muito?):<span
+            class="optional"></span></label>
+        <textarea name="notas"></textarea>
+        <label>&Eacute; para impulsionar?<span class="required"></span></label>
+        <select id="impulsionar" required>
+          <option value="Não">Não</option>
+          <option value="Sim">Sim</option>
+        </select>
+        <div id="avisoImpulsionamento" style="display: none;">
+          ⚠️ Não recomendamos o impulsionamento para comparecer em menos de 4
+          dias
+        </div>
+        <!-- Botão de navegação no final da seção 1 -->
+        <div class="nav-buttons">
+          <button type="button" class="salvar" onclick="salvarPDF()"
+            id="btnFinalizar">
+            ✅ Finalizar e Salvar como PDF
+          </button>
+          <button type="button" class="continuar" onclick="validarSessao(1)"
+            id="btnContinuar" style="display: none;">
+            Continuar para Impulsionamento ➡️
+          </button>
+        </div>
+      </section>
+
+      <section id="sessao2" class="form-section">
+        <h2>📂 Sessão 2 - Impulsionamento</h2>
+        <p id="avisoImpulsionamento4dias">⚠️ Não recomendamos o impulsionamento
+          para comparecer em menos de 4 dias</p>
+
+        <div class="form-group">
+          <label>Gênero:<span class="required"></span></label>
+          <select name="genero" required>
+            <option value="Ambos" selected>Ambos</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Feminino">Feminino</option>
+          </select>
+
+          <div class="idade-container">
+            <div>
+              <label>Idade mínima:<span class="required"></span></label>
+              <input name="idadeMinima" type="number" value="18" required
+                min="18" max="100" />
+            </div>
+            <div>
+              <label>Idade máxima:<span class="required"></span></label>
+              <input name="idadeMaxima" type="number" value="55" required
+                min="18" max="100" />
+            </div>
+          </div>
+
+          <label>Quantos dias de impulsionamento?<span
+              class="required"></span></label>
+          <input name="dias" type="number" value="4" required min="1" />
+
+          <label>Qual orçamento sugerido por dia?<span
+              class="required"></span></label>
+          <input name="orcamento" type="text" value="R$50,00" required />
+        </div>
+
+        <div class="bairros-section">
+          <div class="bairros-container">
+            <div class="bairros-search">
+              <input type="text" placeholder="Buscar bairro..."
+                id="bairroSearch">
+            </div>
+            <div class="bairros-list">
+              <select multiple="multiple" name="bairros" required>
+                <option value="toda">Toda Joinville</option>
+                <optgroup label="CentroNorte">
+                  <option value="Centro">Centro</option>
+                  <option value="Bom Retiro">Bom Retiro</option>
+                  <option value="Pirabeiraba/Centro">Pirabeiraba/Centro</option>
+                  <option value="América">América</option>
+                  <option value="Atiradores">Atiradores</option>
+                  <option value="Costa e Silva">Costa e Silva</option>
+                  <option value="Dona Francisca">Dona Francisca</option>
+                  <option value="Glória">Glória</option>
+                  <option value="Jardim Paraíso">Jardim Paraíso</option>
+                  <option value="Jardim Sofia">Jardim Sofia</option>
+                  <option value="Rio Bonito">Rio Bonito</option>
+                  <option value="Saguaçu">Saguaçu</option>
+                  <option value="Santo Antônio">Santo Antônio</option>
+                  <option value="Santa Catarina">Santa Catarina</option>
+                  <option value="Zona Industrial Norte">Zona Industrial
+                    Norte</option>
+                </optgroup>
+                <optgroup label="Zona Leste">
+                  <option value="Aventureiro">Aventureiro</option>
+                  <option value="Boa Vista">Boa Vista</option>
+                  <option value="Comasa">Comasa</option>
+                  <option value="Espinheiros">Espinheiros</option>
+                  <option value="Iriri&uacute;">Iriri&uacute;</option>
+                  <option value="Jardim Iriri&uacute;">Jardim
+                    Iriri&uacute;</option>
+                  <option value="Vila Cubat&atilde;o">Vila
+                    Cubat&atilde;o</option>
+                  <option value="Zona Industrial Tupy">Zona Industrial
+                    Tupy</option>
+                </optgroup>
+                <optgroup label="Zona Sul">
+                  <option value="Adhemar Garcia">Adhemar Garcia</option>
+                  <option value="Anita Garibaldi">Anita Garibaldi</option>
+                  <option value="Boehmerwald">Boehmerwald</option>
+                  <option value="Bucarein">Bucarein</option>
+                  <option value="F&aacute;tima">F&aacute;tima</option>
+                  <option value="Floresta">Floresta</option>
+                  <option value="Guanabara">Guanabara</option>
+                  <option value="Itaum">Itaum</option>
+                  <option value="Itinga">Itinga</option>
+                  <option value="Jarivatuba">Jarivatuba</option>
+                  <option value="Jo&atilde;o Costa">Jo&atilde;o Costa</option>
+                  <option value="Paranaguamirim">Paranaguamirim</option>
+                  <option value="Parque Guarani">Parque Guarani</option>
+                  <option value="Petr&oacute;polis">Petr&oacute;polis</option>
+                  <option value="Profipo">Profipo</option>
+                </optgroup>
+                <optgroup label="Zona Oeste">
+                  <option value="Morro do Meio">Morro do Meio</option>
+                  <option value="Nova Bras&iacute;lia">Nova
+                    Bras&iacute;lia</option>
+                  <option value="S&atilde;o Marcos">S&atilde;o Marcos</option>
+                  <option value="Ulysses Guimar&atilde;es">Ulysses
+                    Guimar&atilde;es</option>
+                  <option value="Vila Nova">Vila Nova</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+          <div><label>Quais bairros:</label><input name="outrosBairros" required
+              type="text" /></div>
+        </div>
+
+        <!-- Botões de navegação no final da seção 2 -->
+        <div class="nav-buttons">
+          <button type="button" class="voltar" onclick="voltarSessao(1)">
+            ⬅️ Voltar
+          </button>
+          <button type="button" class="salvar" onclick="salvarPDF()">
+            ✅ Finalizar e Salvar como PDF
+          </button>
+        </div>
+      </section>
+
+      <!-- Feedback visual -->
+      <div id="errorMessages" class="error-container" style="display: none;">
+        <p>Por favor, corrija os seguintes erros:</p>
+        <ul></ul>
+      </div>
+    </form>
+    <script src="formulario.js"></script>
+  </body>
+</html>
