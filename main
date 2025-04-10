@@ -158,26 +158,35 @@
               intervalo</button>
           </div>
         </div>
-        <label title="Se não tiver horário definido, o padrão será das 7:30 às 17:00">Tem horário definido?<span class="required"></span><span class="info-icon">ℹ️</span></label>
+        <label
+          title="Se não tiver horário definido, o padrão será das 7:30 às 17:00">Tem
+          horário definido?<span class="required"></span><span
+            class="info-icon">ℹ️</span></label>
         <select id="temHorarioDefinido" required>
-          <option value="">Selecione</option>
+          <option value>Selecione</option>
           <option value="Sim">Sim</option>
           <option value="Não">Não</option>
         </select>
 
         <div id="horariosContainer" style="display: none;">
+          <div class="tipo-container"></div>
+        <div id="horariosContainer" style="display: none;">
           <div class="tipo-container">
-            <label><input type="radio" name="tipoHorario" value="unico" checked /> Horário único</label>
-            <label><input type="radio" name="tipoHorario" value="intervalo" /> Intervalo</label>
+            <label><input type="radio" name="tipoHorario" value="unico"
+                checked /> Horário único</label>
+            <label><input type="radio" name="tipoHorario" value="intervalo" />
+              Intervalo</label>
           </div>
 
           <div id="horarioUnico">
             <div class="campo-horario">
               <label>Horário:</label>
               <input type="time" name="horarios[]" required />
-              <span class="remove-btn" onclick="removerHorario(this)">&times;</span>
+              <span class="remove-btn"
+                onclick="removerHorario(this)">&times;</span>
             </div>
-            <button type="button" onclick="adicionarHorario()">+ Adicionar horário</button>
+            <button type="button" onclick="adicionarHorario()">+ Adicionar
+              horário</button>
           </div>
 
           <div id="horarioIntervalo" style="display: none;">
