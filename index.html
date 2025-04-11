@@ -39,14 +39,9 @@
     <!-- Texto de reforço logo no início -->
     <!-- Reforça o motivo pelo qual o formulário é importante e estimula o preenchimento com mais atenção -->
     <p><strong>📢 Este formulário garante que sua vaga seja divulgada com
-        rapidez e visibilidade.</strong></p>
-    <p><strong>❗Vagas sem esse envio podem demorar mais para irem ao
-        ar.</strong></p>
+        rapidez e agilidade. Sem as informações obrigatórias podem demorar mais tempo por falta de informação.</strong></p>
 
-    <!-- Microcopy explicativa com linguagem leve -->
-    <!-- Essa dica diminui dúvidas e melhora a qualidade das informações enviadas pelo usuário -->
-    <p class="dica">📌 Essa etapa ajuda o marketing a entender melhor como
-      divulgar sua vaga.</p>
+    <p><strong>Esse formulário leva menos de 5 minutos para ser preenchido.</strong></p>
 
     <form id="vagaForm" class="form-grid">
       <section id="sessao1" class="form-section active"></section>
@@ -125,7 +120,7 @@
         </select>
 
         <div id="datasContainer" style="display: none;">
-          <div class="tipo-container"></div>
+          <div class="tipo-container">
             <label><input type="radio" name="tipoData" value="unico" checked />
               Data única</label>
             <label><input type="radio" name="tipoData" value="intervalo" />
@@ -168,8 +163,7 @@
           <option value="Não">Não</option>
         </select>
 
-        <div id="horariosContainer" style="display: none;">
-          <div class="tipo-container"></div>
+        
         <div id="horariosContainer" style="display: none;">
           <div class="tipo-container">
             <label><input type="radio" name="tipoHorario" value="unico"
@@ -192,10 +186,14 @@
           <div id="horarioIntervalo" style="display: none;">
             <div class="campo-intervalo">
               <label>Das</label>
-              <input type="time" name="horaInicio" required />
+              <input type="time" name="horaInicio[]" required />
               <label>às</label>
-              <input type="time" name="horaFim" required />
+              <input type="time" name="horaFim[]" required />
+              <span class="remove-btn"
+                onclick="removerIntervalo(this)">&times;</span>
             </div>
+            <button type="button" onclick="adicionarIntervalo()">+ Adicionar
+              intervalo</button>
           </div>
         </div>
         <!-- Placeholder sugestivo para o número de vagas -->
