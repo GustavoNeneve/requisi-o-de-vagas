@@ -16,21 +16,15 @@ document.addEventListener("DOMContentLoaded", function () {
     joinville: document.getElementById("joinville"),
     cidadeOutras: document.getElementById("cidadeOutras"),
     impulsionar: document.getElementById("impulsionar"),
-    impulsionamento: document.getElementById("impulsionamento"),
     presencial: document.getElementById("presencial"),
     outroLugar: document.getElementById("outroLugar"),
-    eventoContainer: document.getElementById("eventoContainer"),
     temDataDefinida: document.getElementById("temDataDefinida"),
     datasContainer: document.getElementById("datasContainer"),
     temHorarioDefinido: document.getElementById("temHorarioDefinido"),
     horariosContainer: document.getElementById("horariosContainer"),
-    avisoImpulsionamento: document.getElementById("avisoImpulsionamento"),
-    progressSteps: document.querySelectorAll(".progress-step"),
     telefone: document.querySelector('input[name="whatsapp"]'),
     dataUnica: document.getElementById("dataUnica"),
-    dataIntervalo: document.getElementById("dataIntervalo"),
-    datasUnicas: document.getElementById("datasUnicas"),
-    datasIntervalo: document.getElementById("datasIntervalo"),
+    dataIntervalo: document.getElementById("dataIntervalo")
   };
 
   // Funções auxiliares
@@ -587,6 +581,98 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  elementos.impulsionar.addEventListener("change", function () {
+    const btnContinuar = document.getElementById("btnContinuar");
+    const btnFinalizarPDF = document.getElementById("btnFinalizarPDF");
+
+    if (this.value === "Sim") {
+      btnContinuar.style.display = "block";
+      btnFinalizarPDF.style.display = "none";
+    } else {
+      btnContinuar.style.display = "none";
+      btnFinalizarPDF.style.display = "block";
+    }
+
+    verificarDataImpulsionamento();
+  });
+
+  elementos.impulsionar.addEventListener("change", async function () {
+    const sessao2 = document.querySelector(".sessao-2");
+    const btnContinuar = document.getElementById("btnContinuar");
+    const btnFinalizarPDF = document.getElementById("btnFinalizarPDF");
+    
+    if (this.value === "Sim") {
+      btnContinuar.style.display = "block";
+      btnFinalizarPDF.style.display = "none";
+      sessao2.style.display = "block";
+      
+      // Tornar campos da sessão 2 obrigatórios
+      ['idadeMinima', 'idadeMaxima', 'dias', 'orcamento'].forEach(campo => {
+        document.querySelector(`input[name="${campo}"]`).required = true;
+      });
+    } else {
+      // Se houver dados preenchidos na sessão 2, confirmar antes de limpar
+      const temDadosPreenchidos = verificarDadosPreenchidosSessao2();
+      
+      if (temDadosPreenchidos) {
+        const confirmacao = await Swal.fire({
+          title: 'Atenção',
+          text: 'Ao desativar o impulsionamento, os dados da Sessão 2 serão perdidos. Deseja continuar?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Sim, continuar',
+          cancelButtonText: 'Não, manter dados'
+        });
+        
+        if (!confirmacao.isConfirmed) {
+          this.value = "Sim";
+          return;
+        }
+      }
+      
+      // Limpar e ocultar sessão 2
+      limparDadosSessao2();
+      sessao2.style.display = "none";
+      btnContinuar.style.display = "none";
+      btnFinalizarPDF.style.display = "block";
+    }
+  });
+
+  function verificarDadosPreenchidosSessao2() {
+    const campos = ['idadeMinima', 'idadeMaxima', 'dias', 'orcamento'];
+    return campos.some(campo => 
+      document.querySelector(`input[name="${campo}"]`).value.trim() !== ''
+    );
+  }
+
+  function limparDadosSessao2() {
+    // Limpar valores dos campos
+    ['idadeMinima', 'idadeMaxima', 'dias', 'orcamento'].forEach(campo => {
+      const input = document.querySelector(`input[name="${campo}"]`);
+      input.value = '';
+      input.required = false;
+    });
+    
+    // Limpar seleção de bairros
+    document.querySelector('select[name="bairros"]').selectedIndex = -1;
+    
+    // Remover validações visuais
+    document.querySelectorAll('.sessao-2 .invalid').forEach(el => {
+      el.classList.remove('invalid');
+    });
+  }
+
+  // Melhorar a função de filtrar bairros
+  function filtrarBairros() {
+    const searchInput = document.getElementById("bairroSearch").value.toLowerCase();
+    const bairrosSelect = document.querySelector('select[name="bairros"]');
+    
+    Array.from(bairrosSelect.options).forEach(option => {
+      const text = option.text.toLowerCase();
+      option.style.display = text.includes(searchInput) ? "" : "none";
+    });
+  }
+
   // Validação da idade
   document
     .querySelector('input[name="idadeMaxima"]')
@@ -616,7 +702,8 @@ document.addEventListener("DOMContentLoaded", function () {
       'cargo': 'Nome do cargo',
       'vagas': 'Quantas vagas',
       'joinville': 'É para Joinville',
-      'impulsionar': 'É para impulsionar'
+      'impulsionar': 'É para impulsionar',
+      'temDataDefinida': 'Tem data definida'
     };
 
     // Validar campos sempre obrigatórios
@@ -640,19 +727,23 @@ document.addEventListener("DOMContentLoaded", function () {
     // Validação condicional: Data Definida
     if (elementos.temDataDefinida.value === "Sim") {
       const tipoData = document.querySelector('input[name="tipoData"]:checked');
-      if (tipoData.value === "unico") {
-        const datas = document.querySelectorAll('input[name="datas[]"]');
-        if (!Array.from(datas).some(d => d.value)) {
-          erros.push("Pelo menos uma data é obrigatória");
-          datas.forEach(d => d.classList.add('invalid'));
-        }
+      if (!tipoData) {
+          erros.push("Tipo de data (Única ou Intervalo) é obrigatório");
       } else {
-        const dataInicio = document.querySelector('input[name="dataInicio[]"]');
-        const dataFim = document.querySelector('input[name="dataFim[]"]');
-        if (!dataInicio.value || !dataFim.value) {
-          erros.push("Início e fim do intervalo de datas são obrigatórios");
-          if (!dataInicio.value) dataInicio.classList.add('invalid');
-          if (!dataFim.value) dataFim.classList.add('invalid');
+        if (tipoData.value === "unico") {
+          const datas = document.querySelectorAll('input[name="datas[]"]');
+          if (!Array.from(datas).some(d => d.value)) {
+            erros.push("Pelo menos uma data é obrigatória");
+            datas.forEach(d => d.classList.add('invalid'));
+          }
+        } else {
+          const dataInicio = document.querySelector('input[name="dataInicio[]"]');
+          const dataFim = document.querySelector('input[name="dataFim[]"]');
+          if (!dataInicio.value || !dataFim.value) {
+            erros.push("Início e fim do intervalo de datas são obrigatórios");
+            if (!dataInicio.value) dataInicio.classList.add('invalid');
+            if (!dataFim.value) dataFim.classList.add('invalid');
+          }
         }
       }
     }
@@ -660,19 +751,23 @@ document.addEventListener("DOMContentLoaded", function () {
     // Validação condicional: Horário Definido
     if (elementos.temHorarioDefinido.value === "Sim") {
       const tipoHorario = document.querySelector('input[name="tipoHorario"]:checked');
-      if (tipoHorario.value === "unico") {
-        const horarios = document.querySelectorAll('input[name="horarios[]"]');
-        if (!Array.from(horarios).some(h => h.value)) {
-          erros.push("Pelo menos um horário é obrigatório");
-          horarios.forEach(h => h.classList.add('invalid'));
-        }
+      if (!tipoHorario) {
+          erros.push("Tipo de horário (Único ou Intervalo) é obrigatório");
       } else {
-        const horaInicio = document.querySelector('input[name="horaInicio"]');
-        const horaFim = document.querySelector('input[name="horaFim"]');
-        if (!horaInicio.value || !horaFim.value) {
-          erros.push("Início e fim do intervalo de horários são obrigatórios");
-          if (!horaInicio.value) horaInicio.classList.add('invalid');
-          if (!horaFim.value) horaFim.classList.add('invalid');
+        if (tipoHorario.value === "unico") {
+          const horarios = document.querySelectorAll('input[name="horarios[]"]');
+          if (!Array.from(horarios).some(h => h.value)) {
+            erros.push("Pelo menos um horário é obrigatório");
+            horarios.forEach(h => h.classList.add('invalid'));
+          }
+        } else {
+          const horaInicio = document.querySelector('input[name="horaInicio[]"]');
+          const horaFim = document.querySelector('input[name="horaFim[]"]');
+          if (!horaInicio.value || !horaFim.value) {
+            erros.push("Início e fim do intervalo de horários são obrigatórios");
+            if (!horaInicio.value) horaInicio.classList.add('invalid');
+            if (!horaFim.value) horaFim.classList.add('invalid');
+          }
         }
       }
     }
@@ -696,6 +791,38 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!bairrosJoinville.value || bairrosJoinville.selectedOptions.length === 0) {
         erros.push("Selecione os bairros de Joinville");
         bairrosJoinville.classList.add('invalid');
+      }
+    }
+
+    // Validação condicional: Turnos
+    const turnosSelecionados = document.querySelectorAll('input[name="turnos[]"]:checked');
+    if (turnosSelecionados.length === 0) {
+      erros.push("Selecione pelo menos um turno");
+    }
+
+    // Validação específica para Sessão 2 quando impulsionar é "Sim"
+    if (elementos.impulsionar.value === "Sim") {
+      // Validar campos numéricos
+      const camposNumericos = {
+        'idadeMinima': 'Idade mínima',
+        'idadeMaxima': 'Idade máxima',
+        'dias': 'Dias de impulsionamento',
+        'orcamento': 'Orçamento por dia'
+      };
+      
+      Object.entries(camposNumericos).forEach(([campo, label]) => {
+        const input = document.querySelector(`input[name="${campo}"]`);
+        if (!input.value.trim()) {
+          erros.push(`${label} é obrigatório`);
+          input.classList.add('invalid');
+        }
+      });
+      
+      // Validar seleção de bairros
+      const bairrosSelect = document.querySelector('select[name="bairros"]');
+      if (bairrosSelect.selectedOptions.length === 0) {
+        erros.push("Selecione pelo menos um bairro");
+        bairrosSelect.classList.add('invalid');
       }
     }
 
@@ -733,6 +860,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Atualizar funções de navegação e salvamento
   window.validarSessao = function(sessaoAtual) {
+    console.log("validarSessao called"); // Debugging line
     const erros = validarCamposCondicionais();
     if (!exibirErrosValidacao(erros)) return;
     
@@ -795,4 +923,640 @@ document.addEventListener("DOMContentLoaded", function () {
     funcoes.updateDatas();
     funcoes.updateHorarios();
   });
+
+  function criarResumoCamposFaltantes() {
+    const erros = validarCamposCondicionais();
+    if (erros.length === 0) return null;
+    
+    return `
+      <div class="campos-faltantes-resumo">
+        <h3>📋 Campos obrigatórios não preenchidos:</h3>
+        <ul>
+          ${erros.map(erro => `<li>${erro}</li>`).join('')}
+        </ul>
+        <p>⚠️ Por favor, preencha todos os campos obrigatórios antes de continuar.</p>
+      </div>
+    `;
+  }
+
+  // Update window.salvarPDF function
+  window.salvarPDF = async function() {
+    const resumoFaltantes = criarResumoCamposFaltantes();
+    
+    if (resumoFaltantes) {
+      Swal.fire({
+        icon: "warning",
+        title: "Formulário Incompleto",
+        html: resumoFaltantes,
+        confirmButtonText: "Corrigir campos",
+        showCancelButton: false,
+        customClass: {
+          container: 'swal-wide',
+          content: 'swal-content-large'
+        }
+      }).then(() => {
+        const primeiroInvalido = document.querySelector('.invalid');
+        if (primeiroInvalido) {
+          primeiroInvalido.scrollIntoView({ behavior: "smooth", block: "center" });
+          primeiroInvalido.focus();
+        }
+      });
+      return;
+    }
+    
+    const confirmado = await funcoes.confirmarEnvio();
+    if (confirmado) {
+      html2pdf()
+        .from(document.getElementById("vagaForm"))
+        .save()
+        .then(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Vaga salva com sucesso!",
+            text: "Obrigado por preencher. Vamos divulgar essa oportunidade com excelência!",
+            confirmButtonText: "Fechar"
+          });
+        });
+    }
+  };
+
+  // Update window.validarSessao function
+  window.validarSessao = function(sessaoAtual) {
+    const resumoFaltantes = criarResumoCamposFaltantes();
+    
+    if (resumoFaltantes) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos Obrigatórios",
+        html: resumoFaltantes,
+        confirmButtonText: "OK",
+        customClass: {
+          container: 'swal-custom'
+        }
+      });
+      
+      const primeiroInvalido = document.querySelector('.invalid');
+      if (primeiroInvalido) {
+        primeiroInvalido.scrollIntoView({ behavior: "smooth", block: "center" });
+        primeiroInvalido.focus();
+      }
+      return;
+    }
+    
+    const sessao = document.getElementById(`sessao${sessaoAtual}`);
+    const proximaSessao = document.getElementById(`sessao${sessaoAtual + 1}`);
+    sessao.style.display = "none";
+    proximaSessao.style.display = "block";
+    proximaSessao.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  // Add styles for the missing fields summary
+  const styles = `
+    <style>
+      .campos-faltantes-resumo {
+        text-align: left;
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 15px;
+        border: 1px solid #f8d7da;
+        border-radius: 8px;
+        background-color: #fff3f3;
+        margin-top: 15px;
+      }
+      
+      .campos-faltantes-resumo h3 {
+        color: #721c24;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #f5c6cb;
+        padding-bottom: 8px;
+      }
+      
+      .campos-faltantes-resumo ul {
+        padding-left: 20px;
+        margin: 15px 0;
+      }
+      
+      .campos-faltantes-resumo li {
+        margin-bottom: 8px;
+        color: #721c24;
+        line-height: 1.4;
+      }
+      
+      .swal-wide {
+        width: 600px !important;
+      }
+      
+      .swal-content-large {
+        max-height: 70vh;
+        overflow-y: auto;
+      }
+    </style>
+  `;
+  document.head.insertAdjacentHTML('beforeend', styles);
 });
+
+// Add these functions after the existing validation code
+function verificarCamposFaltantes() {
+  const erros = validarCamposCondicionais();
+  const resumoContainer = document.getElementById('camposFaltantesResumo');
+  const listaFaltantes = document.getElementById('listaFaltantes');
+  
+  if (erros.length === 0) {
+    Swal.fire({
+      icon: "success",
+      title: "Formulário Completo!",
+      text: "Todos os campos obrigatórios foram preenchidos corretamente.",
+      confirmButtonText: "Continuar"
+    });
+    resumoContainer.style.display = 'none';
+    return;
+  }
+  
+  listaFaltantes.innerHTML = '';
+  erros.forEach(erro => {
+    const li = document.createElement('li');
+    li.textContent = erro;
+    listaFaltantes.appendChild(li);
+  });
+  
+  resumoContainer.style.display = 'block';
+  resumoContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+  highlightInvalidFields();
+}
+
+function fecharResumoFaltantes() {
+  document.getElementById('camposFaltantesResumo').style.display = 'none';
+  document.querySelectorAll('.campo-invalido-highlight').forEach(el => {
+    el.classList.remove('campo-invalido-highlight');
+  });
+}
+
+function focarPrimeiroInvalido() {
+  const primeiroInvalido = document.querySelector('.invalid');
+  if (primeiroInvalido) {
+    primeiroInvalido.scrollIntoView({ behavior: "smooth", block: "center" });
+    primeiroInvalido.focus();
+    primeiroInvalido.classList.add('campo-invalido-highlight');
+    setTimeout(() => {
+      primeiroInvalido.classList.remove('campo-invalido-highlight');
+    }, 3000);
+  }
+}
+
+function highlightInvalidFields() {
+  document.querySelectorAll('.campo-invalido-highlight').forEach(el => {
+    el.classList.remove('campo-invalido-highlight');
+  });
+  
+  document.querySelectorAll('.invalid').forEach(el => {
+    el.classList.add('campo-invalido-highlight');
+  });
+}
+
+// Modify the existing salvarPDF function
+const originalSalvarPDF = window.salvarPDF;
+window.salvarPDF = async function() {
+  const erros = validarCamposCondicionais();
+  
+  if (erros.length > 0) {
+    verificarCamposFaltantes();
+    return;
+  }
+  
+  return originalSalvarPDF.call(this);
+};
+
+// Update impulsionar event listener
+elementos.impulsionar.addEventListener("change", async function () {
+  const sessao2 = document.querySelector(".sessao-2");
+  const btnContinuar = document.getElementById("btnContinuar");
+  const btnFinalizarPDF = document.getElementById("btnFinalizarPDF");
+  
+  if (this.value === "Sim") {
+    btnContinuar.style.display = "block";
+    btnFinalizarPDF.style.display = "none";
+    sessao2.classList.add("visible"); // Add class for animation
+    
+    // Make section 2 fields required
+    ['idadeMinima', 'idadeMaxima', 'dias', 'orcamento'].forEach(campo => {
+      document.querySelector(`input[name="${campo}"]`).required = true;
+    });
+  } else {
+    // Check if section 2 has data before clearing
+    if (verificarDadosPreenchidosSessao2()) {
+      const confirmacao = await Swal.fire({
+        title: 'Atenção',
+        text: 'Ao desativar o impulsionamento, os dados da Sessão 2 serão perdidos. Deseja continuar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sim, limpar dados',
+        cancelButtonText: 'Não, manter dados'
+      });
+      
+      if (!confirmacao.isConfirmed) {
+        this.value = "Sim";
+        return;
+      }
+    }
+    
+    limparDadosSessao2();
+    sessao2.classList.remove("visible");
+    btnContinuar.style.display = "none";
+    btnFinalizarPDF.style.display = "block";
+  }
+});
+
+// Add helper functions
+function verificarDadosPreenchidosSessao2() {
+  const campos = ['idadeMinima', 'idadeMaxima', 'dias', 'orcamento'];
+  return campos.some(campo => 
+    document.querySelector(`input[name="${campo}"]`).value.trim() !== ''
+  ) || document.querySelector('select[name="bairros"]').selectedOptions.length > 0;
+}
+
+function limparDadosSessao2() {
+  ['idadeMinima', 'idadeMaxima', 'dias', 'orcamento'].forEach(campo => {
+    const input = document.querySelector(`input[name="${campo}"]`);
+    input.value = '';
+    input.required = false;
+  });
+  
+  document.querySelector('select[name="bairros"]').selectedIndex = -1;
+  document.querySelectorAll('.sessao-2 .invalid').forEach(el => {
+    el.classList.remove('invalid');
+  });
+}
+
+// Improve bairros search functionality
+function filtrarBairros() {
+  const searchInput = document.getElementById("bairroSearch").value.toLowerCase();
+  const bairrosSelect = document.querySelector('select[name="bairros"]');
+  
+  Array.from(bairrosSelect.options).forEach(option => {
+    const matchesSearch = option.text.toLowerCase().includes(searchInput);
+    option.style.display = matchesSearch ? "" : "none";
+    if (option.parentElement.tagName === 'OPTGROUP') {
+      const optgroup = option.parentElement;
+      const hasVisibleOptions = Array.from(optgroup.children).some(opt => opt.style.display !== 'none');
+      optgroup.style.display = hasVisibleOptions ? "" : "none";
+    }
+  });
+}
+
+// Update validarCamposCondicionais for section 2
+function validarCamposCondicionais() {
+  const erros = [];
+
+  // Campos sempre obrigatórios
+  const camposObrigatorios = {
+    'analista': 'Nome do analista',
+    'whatsapp': 'WhatsApp',
+    'divulgaLogo': 'Pode divulgar logo',
+    'producao': 'É produção',
+    'cargo': 'Nome do cargo',
+    'vagas': 'Quantas vagas',
+    'joinville': 'É para Joinville',
+    'impulsionar': 'É para impulsionar',
+    'temDataDefinida': 'Tem data definida'
+  };
+
+  // Validar campos sempre obrigatórios
+  Object.entries(camposObrigatorios).forEach(([campo, label]) => {
+    const elemento = document.querySelector(`[name="${campo}"], #${campo}`);
+    if (!elemento || !elemento.value.trim()) {
+      erros.push(`${label} é obrigatório`);
+      if (elemento) elemento.classList.add('invalid');
+    }
+  });
+
+  // Validação condicional: Logo e Nome da Empresa
+  if (elementos.divulgaLogo.value === "Sim") {
+    const empresa = document.querySelector('input[name="empresa"]');
+    if (!empresa.value.trim()) {
+      erros.push("Nome da empresa é obrigatório quando logo pode ser divulgada");
+      empresa.classList.add('invalid');
+    }
+  }
+
+  // Validação condicional: Data Definida
+  if (elementos.temDataDefinida.value === "Sim") {
+    const tipoData = document.querySelector('input[name="tipoData"]:checked');
+    if (!tipoData) {
+        erros.push("Tipo de data (Única ou Intervalo) é obrigatório");
+    } else {
+      if (tipoData.value === "unico") {
+        const datas = document.querySelectorAll('input[name="datas[]"]');
+        if (!Array.from(datas).some(d => d.value)) {
+          erros.push("Pelo menos uma data é obrigatória");
+          datas.forEach(d => d.classList.add('invalid'));
+        }
+      } else {
+        const dataInicio = document.querySelector('input[name="dataInicio[]"]');
+        const dataFim = document.querySelector('input[name="dataFim[]"]');
+        if (!dataInicio.value || !dataFim.value) {
+          erros.push("Início e fim do intervalo de datas são obrigatórios");
+          if (!dataInicio.value) dataInicio.classList.add('invalid');
+          if (!dataFim.value) dataFim.classList.add('invalid');
+        }
+      }
+    }
+  }
+
+  // Validação condicional: Horário Definido
+  if (elementos.temHorarioDefinido.value === "Sim") {
+    const tipoHorario = document.querySelector('input[name="tipoHorario"]:checked');
+    if (!tipoHorario) {
+        erros.push("Tipo de horário (Único ou Intervalo) é obrigatório");
+    } else {
+      if (tipoHorario.value === "unico") {
+        const horarios = document.querySelectorAll('input[name="horarios[]"]');
+        if (!Array.from(horarios).some(h => h.value)) {
+          erros.push("Pelo menos um horário é obrigatório");
+          horarios.forEach(h => h.classList.add('invalid'));
+        }
+      } else {
+        const horaInicio = document.querySelector('input[name="horaInicio[]"]');
+        const horaFim = document.querySelector('input[name="horaFim[]"]');
+        if (!horaInicio.value || !horaFim.value) {
+          erros.push("Início e fim do intervalo de horários são obrigatórios");
+          if (!horaInicio.value) horaInicio.classList.add('invalid');
+          if (!horaFim.value) horaFim.classList.add('invalid');
+        }
+      }
+    }
+  }
+
+  // Validação condicional: Cidade e Bairros
+  if (elementos.joinville.value === "Não") {
+    const outraCidade = document.querySelector('input[name="outraCidade"]');
+    const outrosBairros = document.querySelector('input[name="outrosBairros"]');
+    
+    if (!outraCidade.value.trim()) {
+      erros.push("Nome da cidade é obrigatório quando não for Joinville");
+      outraCidade.classList.add('invalid');
+    }
+    
+    if (!outrosBairros.value.trim()) {
+      erros.push("Bairros são obrigatórios quando não for Joinville");
+      outrosBairros.classList.add('invalid');
+    }
+  } else if (elementos.joinville.value === "Sim") {
+    const bairrosJoinville = document.querySelector('select[name="bairros"]');
+    if (!bairrosJoinville.value || bairrosJoinville.selectedOptions.length === 0) {
+      erros.push("Selecione os bairros de Joinville");
+      bairrosJoinville.classList.add('invalid');
+    }
+  }
+
+  // Validação condicional: Turnos
+  const turnosSelecionados = document.querySelectorAll('input[name="turnos[]"]:checked');
+  if (turnosSelecionados.length === 0) {
+    erros.push("Selecione pelo menos um turno");
+  }
+
+  // Validação específica para Sessão 2 quando impulsionar é "Sim"
+  if (elementos.impulsionar.value === "Sim") {
+    // Validar campos numéricos
+    const camposNumericos = {
+      'idadeMinima': 'Idade mínima',
+      'idadeMaxima': 'Idade máxima',
+      'dias': 'Dias de impulsionamento',
+      'orcamento': 'Orçamento por dia'
+    };
+    
+    Object.entries(camposNumericos).forEach(([campo, label]) => {
+      const input = document.querySelector(`input[name="${campo}"]`);
+      if (!input.value.trim()) {
+        erros.push(`${label} é obrigatório para impulsionamento`);
+        input.classList.add('invalid');
+      }
+    });
+
+    const bairros = document.querySelector('select[name="bairros"]');
+    if (bairros.selectedOptions.length === 0) {
+      erros.push("Selecione pelo menos um bairro para impulsionamento");
+      bairros.classList.add('invalid');
+    }
+  }
+
+  return erros;
+}
+
+// ...existing code...
+
+// Update impulsionar event listener to handle section 2 visibility and validation
+elementos.impulsionar.addEventListener("change", async function () {
+  const sessao2 = document.querySelector(".sessao-2");
+  const btnContinuar = document.getElementById("btnContinuar");
+  const btnFinalizarPDF = document.getElementById("btnFinalizarPDF");
+  
+  if (this.value === "Sim") {
+    if (validarSessao1()) {
+      btnContinuar.style.display = "block";
+      btnFinalizarPDF.style.display = "none";
+      sessao2.classList.add("visible");
+      habilitarCamposSessao2(true);
+    } else {
+      this.value = "Não";
+      return;
+    }
+  } else {
+    if (verificarDadosPreenchidosSessao2()) {
+      const confirmacao = await Swal.fire({
+        title: 'Atenção',
+        text: 'Ao desativar o impulsionamento, os dados da Sessão 2 serão perdidos. Deseja continuar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sim, limpar dados',
+        cancelButtonText: 'Não, manter dados'
+      });
+      
+      if (!confirmacao.isConfirmed) {
+        this.value = "Sim";
+        return;
+      }
+    }
+    
+    limparDadosSessao2();
+    sessao2.classList.remove("visible");
+    btnContinuar.style.display = "none";
+    btnFinalizarPDF.style.display = "block";
+    habilitarCamposSessao2(false);
+  }
+});
+
+function validarSessao1() {
+  const erros = validarCamposBasicos();
+  if (erros.length > 0) {
+    exibirErrosValidacao(erros);
+    return false;
+  }
+  return true;
+}
+
+function habilitarCamposSessao2(habilitar) {
+  const campos = ['idadeMinima', 'idadeMaxima', 'dias', 'orcamento'];
+  campos.forEach(campo => {
+    const input = document.querySelector(`input[name="${campo}"]`);
+    input.required = habilitar;
+    if (!habilitar) {
+      input.classList.remove('invalid');
+    }
+  });
+  
+  const bairrosSelect = document.querySelector('select[name="bairros"]');
+  bairrosSelect.required = habilitar;
+}
+
+function verificarDadosPreenchidosSessao2() {
+  const campos = ['idadeMinima', 'idadeMaxima', 'dias', 'orcamento'];
+  return campos.some(campo => 
+    document.querySelector(`input[name="${campo}"]`).value.trim() !== ''
+  ) || document.querySelector('select[name="bairros"]').selectedOptions.length > 0;
+}
+
+// Improved bairros search functionality
+function filtrarBairros() {
+  const searchInput = document.getElementById("bairroSearch").value.toLowerCase();
+  const bairrosSelect = document.querySelector('select[name="bairros"]');
+  
+  Array.from(bairrosSelect.querySelectorAll('option, optgroup')).forEach(element => {
+    if (element.tagName === 'OPTGROUP') {
+      const optgroup = element;
+      const options = Array.from(optgroup.getElementsByTagName('option'));
+      const hasVisibleOption = options.some(opt => 
+        opt.textContent.toLowerCase().includes(searchInput)
+      );
+      optgroup.style.display = hasVisibleOption ? '' : 'none';
+      
+      options.forEach(option => {
+        option.style.display = option.textContent.toLowerCase().includes(searchInput) ? '' : 'none';
+      });
+    } else {
+      element.style.display = element.textContent.toLowerCase().includes(searchInput) ? '' : 'none';
+    }
+  });
+}
+
+// Update date validation for impulsionamento warning
+function verificarDataImpulsionamento() {
+  if (elementos.impulsionar.value !== "Sim") {
+    elementos.avisoImpulsionamento.style.display = "none";
+    return;
+  }
+
+  const hoje = new Date();
+  const limite = new Date(hoje);
+  limite.setDate(hoje.getDate() + 4);
+  
+  let temDataRecente = false;
+  
+  if (elementos.temDataDefinida.value === "Sim") {
+    const tipoData = document.querySelector('input[name="tipoData"]:checked').value;
+    
+    if (tipoData === "unico") {
+      document.querySelectorAll('input[name="datas[]"]').forEach(input => {
+        const data = new Date(input.value);
+        if (data <= limite) temDataRecente = true;
+      });
+    } else {
+      const dataInicio = new Date(document.querySelector('input[name="dataInicio[]"]').value);
+      if (dataInicio <= limite) temDataRecente = true;
+    }
+  }
+  
+  elementos.avisoImpulsionamento.style.display = temDataRecente ? "block" : "none";
+}
+
+// ...existing code...
+
+function validarCamposCondicionais() {
+  const erros = [];
+
+  // ...existing validation code for regular fields...
+
+  // Validação específica para Sessão 2 quando impulsionar é "Sim"
+  if (elementos.impulsionar.value === "Sim") {
+    // Validar gênero
+    const genero = document.querySelector('select[name="genero"]');
+    if (!genero.value) {
+      erros.push("Selecione o gênero para impulsionamento");
+      genero.classList.add('invalid');
+    }
+
+    // Validar idade mínima e máxima
+    const idadeMin = document.querySelector('input[name="idadeMinima"]');
+    const idadeMax = document.querySelector('input[name="idadeMaxima"]');
+    
+    if (!idadeMin.value.trim()) {
+      erros.push("Idade mínima é obrigatória para impulsionamento");
+      idadeMin.classList.add('invalid');
+    }
+    
+    if (!idadeMax.value.trim()) {
+      erros.push("Idade máxima é obrigatória para impulsionamento");
+      idadeMax.classList.add('invalid');
+    }
+
+    // Validar se idade máxima é maior que mínima
+    if (parseInt(idadeMax.value) < parseInt(idadeMin.value)) {
+      erros.push("Idade máxima deve ser maior que a idade mínima");
+      idadeMax.classList.add('invalid');
+    }
+
+    // Validar dias de impulsionamento
+    const dias = document.querySelector('input[name="dias"]');
+    if (!dias.value.trim() || parseInt(dias.value) < 1) {
+      erros.push("Informe uma quantidade válida de dias para impulsionamento");
+      dias.classList.add('invalid');
+    }
+
+    // Validar orçamento
+    const orcamento = document.querySelector('input[name="orcamento"]');
+    if (!orcamento.value.trim() || orcamento.value === 'R$0,00') {
+      erros.push("Informe um valor válido para o orçamento diário");
+      orcamento.classList.add('invalid');
+    }
+
+    // Validar seleção de bairros
+    const bairrosSelect = document.querySelector('select[name="bairros"]');
+    if (!bairrosSelect.value || bairrosSelect.selectedOptions.length === 0) {
+      erros.push("Selecione pelo menos um bairro para impulsionamento");
+      bairrosSelect.classList.add('invalid');
+    }
+  }
+
+  return erros;
+}
+
+// Atualizar função que limpa campos da Sessão 2
+function limparDadosSessao2() {
+  const campos = ['idadeMinima', 'idadeMaxima', 'dias', 'orcamento'];
+  campos.forEach(campo => {
+    const input = document.querySelector(`input[name="${campo}"]`);
+    input.value = campo === 'orcamento' ? 'R$0,00' : '';
+    input.required = false;
+    input.classList.remove('invalid', 'valid');
+  });
+  
+  // Resetar select de gênero
+  const genero = document.querySelector('select[name="genero"]');
+  genero.value = 'Ambos';
+  genero.classList.remove('invalid', 'valid');
+  
+  // Limpar seleção de bairros
+  const bairrosSelect = document.querySelector('select[name="bairros"]');
+  bairrosSelect.selectedIndex = -1;
+  bairrosSelect.classList.remove('invalid', 'valid');
+}
+
+// Adicionar evento para validar idade máxima ao mudar idade mínima
+document.querySelector('input[name="idadeMinima"]').addEventListener('change', function() {
+  const idadeMax = document.querySelector('input[name="idadeMaxima"]');
+  if (parseInt(idadeMax.value) < parseInt(this.value)) {
+    idadeMax.value = this.value;
+  }
+  validarCampo(idadeMax);
+});
+
+// ...existing code...

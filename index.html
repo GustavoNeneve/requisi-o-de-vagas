@@ -9,35 +9,6 @@
     <link rel="stylesheet" href="formulario.css">
   </head>
   <body>
-    <!-- Removendo a barra de progresso -->
-    <!-- <div class="container separator">
-      <ul class="progress-tracker progress-tracker--vertical">
-        <li class="progress-step is-complete">
-          <div class="progress-marker"></div>
-          <div class="progress-text">
-            <h4 class="progress-title">Dados Básicos</h4>
-            <p>Preencha as informações iniciais da vaga.</p>
-          </div>
-        </li>
-        <li class="progress-step is-complete">
-          <div class="progress-marker"></div>
-          <div class="progress-text">
-            <h4 class="progress-title">Datas e Horários</h4>
-            <p>Defina as datas e horários para a vaga.</p>
-          </div>
-        </li>
-        <li class="progress-step is-active" aria-current="step">
-          <div class="progress-marker"></div>
-          <div class="progress-text">
-            <h4 class="progress-title">Impulsionamento</h4>
-            <p>Configure o alcance e impulsionamento da vaga.</p>
-          </div>
-        </li>
-      </ul>
-    </div> -->
-
-    <!-- Texto de reforço logo no início -->
-    <!-- Reforça o motivo pelo qual o formulário é importante e estimula o preenchimento com mais atenção -->
     <p><strong>📢 Este formulário garante que sua vaga seja divulgada com
         rapidez e agilidade. Sem as informações obrigatórias podem demorar mais tempo por falta de informação.</strong></p>
 
@@ -234,7 +205,7 @@
         <!-- Botão de navegação no final da seção 1 -->
         <div class="nav-buttons">
           <button type="button" class="salvar" onclick="salvarPDF()"
-            id="btnFinalizar">
+            id="btnFinalizarPDF">
             ✅ Finalizar e Salvar como PDF
           </button>
           <button type="button" class="continuar" onclick="validarSessao(1)"
@@ -285,7 +256,7 @@
               <input type="text" placeholder="Buscar bairro..."
                 id="bairroSearch">
             </div>
-            <div class="bairros-list">
+            <div class="bairros-list"></div>
               <select multiple="multiple" name="bairros" required>
                 <option value="toda">Toda Joinville</option>
                 <optgroup label="CentroNorte">
