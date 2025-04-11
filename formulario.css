@@ -433,12 +433,20 @@ input.invalid, select.invalid, textarea.invalid {
 
 .sessao-2 {
   opacity: 0;
-  transition: opacity 0.3s ease-in-out;
+  visibility: hidden;
+  transition: all 0.3s ease-in-out;
+  transform: translateY(-20px);
   margin-top: 20px;
   padding: 20px;
-  border-top: 2px solid #1976D2;
-  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
+  background-color: #fff;
+}
+
+.sessao-2.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .idade-container {
@@ -499,6 +507,9 @@ input.invalid, select.invalid, textarea.invalid {
 
 .bairros-section {
   margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 p strong {
@@ -695,65 +706,11 @@ p strong {
   background-color: #138496;
 }
 
-/* Estilos para a Sessão 2 */
-.sessao-2 {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-  margin-top: 20px;
-  padding: 20px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #fff;
-}
-
-.sessao-2.visible {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Enhanced Section 2 Styles */
-.sessao-2 {
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease-in-out;
-  transform: translateY(-20px);
-  margin-top: 20px;
-  padding: 20px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #fff;
-}
-
-.sessao-2.visible {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.sessao-2 input[required],
-.sessao-2 select[required] {
-  border-left: 3px solid #2196F3;
-  padding-left: 12px;
-}
-
-.sessao-2 label[for*="idade"],
-.sessao-2 label[for*="dias"],
-.sessao-2 label[for*="orcamento"] {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sessao-2 label[for*="idade"]::after,
-.sessao-2 label[for*="dias"]::after,
-.sessao-2 label[for*="orcamento"]::after {
-  content: "ℹ️";
-  font-size: 14px;
-}
-
 .bairros-container {
   position: relative;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px;
 }
 
 #bairroSearch {
@@ -864,4 +821,39 @@ p strong {
 
 #btnVerificarCampos:hover {
   background-color: #138496;
+}
+
+.bairros-container {
+  position: relative;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.bairros-list select[multiple] {
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.outros-bairros {
+  margin-top: 10px;
+  padding: 10px;
+  border-top: 1px solid #e0e0e0;
+}
+
+#temHorarioDefinido.invalid {
+  border-color: #dc3545;
+  background-color: #fff8f8;
+  animation: shake 0.5s linear;
+}
+
+/* Animação para o campo inválido */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
 }

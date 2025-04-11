@@ -15,7 +15,7 @@
     <p><strong>Esse formulário leva menos de 5 minutos para ser preenchido.</strong></p>
 
     <form id="vagaForm" class="form-grid">
-      <section id="sessao1" class="form-section active"></section>
+      <section id="sessao1" class="form-section active">
         <h2>📂 Sessão 1 - Dados da Vaga</h2>
         <!-- Campos obrigatórios com * -->
         <label
@@ -124,12 +124,12 @@
               intervalo</button>
           </div>
         </div>
-        <label
-          title="Se não tiver horário definido, o padrão será das 7:30 às 17:00">Tem
-          horário definido?<span class="required"></span><span
-            class="info-icon">ℹ️</span></label>
+        <label title="Se não tiver horário definido, o padrão será das 7:30 às 17:00">
+          Tem horário definido?<span class="required"></span>
+          <span class="info-icon">ℹ️</span>
+        </label>
         <select id="temHorarioDefinido" required>
-          <option value>Selecione</option>
+          <option value="">Selecione</option>
           <option value="Sim">Sim</option>
           <option value="Não">Não</option>
         </select>
@@ -217,8 +217,7 @@
 
       <section id="sessao2" class="form-section">
         <h2>📂 Sessão 2 - Impulsionamento</h2>
-        <p id="avisoImpulsionamento4dias">⚠️ Não recomendamos o impulsionamento
-          para comparecer em menos de 4 dias</p>
+        <p id="avisoImpulsionamento4dias">⚠️ Não recomendamos o impulsionamento para comparecer em menos de 4 dias</p>
 
         <div class="form-group">
           <label>Gênero:<span class="required"></span></label>
@@ -241,6 +240,80 @@
             </div>
           </div>
 
+          <div class="bairros-section">
+            <div class="bairros-container">
+              <div class="bairros-search">
+                <input type="text" placeholder="Buscar bairro..." id="bairroSearch">
+              </div>
+              <div class="bairros-list">
+                <select multiple="multiple" name="bairros" required>
+                  <option value="toda">Toda Joinville</option>
+                  <optgroup label="CentroNorte">
+                    <option value="Centro">Centro</option>
+                    <option value="Bom Retiro">Bom Retiro</option>
+                    <option value="Pirabeiraba/Centro">Pirabeiraba/Centro</option>
+                    <option value="América">América</option>
+                    <option value="Atiradores">Atiradores</option>
+                    <option value="Costa e Silva">Costa e Silva</option>
+                    <option value="Dona Francisca">Dona Francisca</option>
+                    <option value="Glória">Glória</option>
+                    <option value="Jardim Paraíso">Jardim Paraíso</option>
+                    <option value="Jardim Sofia">Jardim Sofia</option>
+                    <option value="Rio Bonito">Rio Bonito</option>
+                    <option value="Saguaçu">Saguaçu</option>
+                    <option value="Santo Antônio">Santo Antônio</option>
+                    <option value="Santa Catarina">Santa Catarina</option>
+                    <option value="Zona Industrial Norte">Zona Industrial
+                      Norte</option>
+                  </optgroup>
+                  <optgroup label="Zona Leste">
+                    <option value="Aventureiro">Aventureiro</option>
+                    <option value="Boa Vista">Boa Vista</option>
+                    <option value="Comasa">Comasa</option>
+                    <option value="Espinheiros">Espinheiros</option>
+                    <option value="Iriri&uacute;">Iriri&uacute;</option>
+                    <option value="Jardim Iriri&uacute;">Jardim
+                      Iriri&uacute;</option>
+                    <option value="Vila Cubat&atilde;o">Vila
+                      Cubat&atilde;o</option>
+                    <option value="Zona Industrial Tupy">Zona Industrial
+                      Tupy</option>
+                  </optgroup>
+                  <optgroup label="Zona Sul">
+                    <option value="Adhemar Garcia">Adhemar Garcia</option>
+                    <option value="Anita Garibaldi">Anita Garibaldi</option>
+                    <option value="Boehmerwald">Boehmerwald</option>
+                    <option value="Bucarein">Bucarein</option>
+                    <option value="F&aacute;tima">F&aacute;tima</option>
+                    <option value="Floresta">Floresta</option>
+                    <option value="Guanabara">Guanabara</option>
+                    <option value="Itaum">Itaum</option>
+                    <option value="Itinga">Itinga</option>
+                    <option value="Jarivatuba">Jarivatuba</option>
+                    <option value="Jo&atilde;o Costa">Jo&atilde;o Costa</option>
+                    <option value="Paranaguamirim">Paranaguamirim</option>
+                    <option value="Parque Guarani">Parque Guarani</option>
+                    <option value="Petr&oacute;polis">Petr&oacute;polis</option>
+                    <option value="Profipo">Profipo</option>
+                  </optgroup>
+                  <optgroup label="Zona Oeste">
+                    <option value="Morro do Meio">Morro do Meio</option>
+                    <option value="Nova Bras&iacute;lia">Nova
+                      Bras&iacute;lia</option>
+                    <option value="S&atilde;o Marcos">S&atilde;o Marcos</option>
+                    <option value="Ulysses Guimar&atilde;es">Ulysses
+                      Guimar&atilde;es</option>
+                    <option value="Vila Nova">Vila Nova</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="outros-bairros" style="display: none;">
+              <label>Quais bairros:</label>
+              <input name="outrosBairros" required type="text" />
+            </div>
+          </div>
+
           <label>Quantos dias de impulsionamento?<span
               class="required"></span></label>
           <input name="dias" type="number" value="4" required min="1" />
@@ -250,80 +323,6 @@
           <input name="orcamento" type="text" value="R$50,00" required />
         </div>
 
-        <div class="bairros-section">
-          <div class="bairros-container">
-            <div class="bairros-search">
-              <input type="text" placeholder="Buscar bairro..."
-                id="bairroSearch">
-            </div>
-            <div class="bairros-list"></div>
-              <select multiple="multiple" name="bairros" required>
-                <option value="toda">Toda Joinville</option>
-                <optgroup label="CentroNorte">
-                  <option value="Centro">Centro</option>
-                  <option value="Bom Retiro">Bom Retiro</option>
-                  <option value="Pirabeiraba/Centro">Pirabeiraba/Centro</option>
-                  <option value="América">América</option>
-                  <option value="Atiradores">Atiradores</option>
-                  <option value="Costa e Silva">Costa e Silva</option>
-                  <option value="Dona Francisca">Dona Francisca</option>
-                  <option value="Glória">Glória</option>
-                  <option value="Jardim Paraíso">Jardim Paraíso</option>
-                  <option value="Jardim Sofia">Jardim Sofia</option>
-                  <option value="Rio Bonito">Rio Bonito</option>
-                  <option value="Saguaçu">Saguaçu</option>
-                  <option value="Santo Antônio">Santo Antônio</option>
-                  <option value="Santa Catarina">Santa Catarina</option>
-                  <option value="Zona Industrial Norte">Zona Industrial
-                    Norte</option>
-                </optgroup>
-                <optgroup label="Zona Leste">
-                  <option value="Aventureiro">Aventureiro</option>
-                  <option value="Boa Vista">Boa Vista</option>
-                  <option value="Comasa">Comasa</option>
-                  <option value="Espinheiros">Espinheiros</option>
-                  <option value="Iriri&uacute;">Iriri&uacute;</option>
-                  <option value="Jardim Iriri&uacute;">Jardim
-                    Iriri&uacute;</option>
-                  <option value="Vila Cubat&atilde;o">Vila
-                    Cubat&atilde;o</option>
-                  <option value="Zona Industrial Tupy">Zona Industrial
-                    Tupy</option>
-                </optgroup>
-                <optgroup label="Zona Sul">
-                  <option value="Adhemar Garcia">Adhemar Garcia</option>
-                  <option value="Anita Garibaldi">Anita Garibaldi</option>
-                  <option value="Boehmerwald">Boehmerwald</option>
-                  <option value="Bucarein">Bucarein</option>
-                  <option value="F&aacute;tima">F&aacute;tima</option>
-                  <option value="Floresta">Floresta</option>
-                  <option value="Guanabara">Guanabara</option>
-                  <option value="Itaum">Itaum</option>
-                  <option value="Itinga">Itinga</option>
-                  <option value="Jarivatuba">Jarivatuba</option>
-                  <option value="Jo&atilde;o Costa">Jo&atilde;o Costa</option>
-                  <option value="Paranaguamirim">Paranaguamirim</option>
-                  <option value="Parque Guarani">Parque Guarani</option>
-                  <option value="Petr&oacute;polis">Petr&oacute;polis</option>
-                  <option value="Profipo">Profipo</option>
-                </optgroup>
-                <optgroup label="Zona Oeste">
-                  <option value="Morro do Meio">Morro do Meio</option>
-                  <option value="Nova Bras&iacute;lia">Nova
-                    Bras&iacute;lia</option>
-                  <option value="S&atilde;o Marcos">S&atilde;o Marcos</option>
-                  <option value="Ulysses Guimar&atilde;es">Ulysses
-                    Guimar&atilde;es</option>
-                  <option value="Vila Nova">Vila Nova</option>
-                </optgroup>
-              </select>
-            </div>
-          </div>
-          <div><label>Quais bairros:</label><input name="outrosBairros" required
-              type="text" /></div>
-        </div>
-
-        <!-- Botões de navegação no final da seção 2 -->
         <div class="nav-buttons">
           <button type="button" class="voltar" onclick="voltarSessao(1)">
             ⬅️ Voltar
@@ -340,6 +339,6 @@
         <ul></ul>
       </div>
     </form>
-    <script src="formulario.js"></script>
+    <script type="module" src="formulario.js"></script>
   </body>
 </html>

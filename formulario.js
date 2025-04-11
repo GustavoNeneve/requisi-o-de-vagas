@@ -1,3 +1,20 @@
+import { elementos } from './js/elementos.js';
+import { mascaras } from './js/mascaras.js';
+import { validacao } from './js/validacao.js';
+import { eventos } from './js/eventos.js';
+
+document.addEventListener("DOMContentLoaded", function () {
+  const hoje = new Date().toISOString().split("T")[0];
+
+  // Inicializar datas mínimas
+  document.querySelectorAll('input[type="date"]').forEach((input) => {
+    input.min = hoje;
+  });
+
+  // Remover event listeners antigos pois agora são gerenciados pelo módulo eventos
+  // ...rest of event listeners...
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   const hoje = new Date().toISOString().split("T")[0];
 
@@ -703,7 +720,8 @@ document.addEventListener("DOMContentLoaded", function () {
       'vagas': 'Quantas vagas',
       'joinville': 'É para Joinville',
       'impulsionar': 'É para impulsionar',
-      'temDataDefinida': 'Tem data definida'
+      'temDataDefinida': 'Tem data definida',
+      'temHorarioDefinido': 'Tem horário definido'
     };
 
     // Validar campos sempre obrigatórios
@@ -1217,7 +1235,8 @@ function validarCamposCondicionais() {
     'vagas': 'Quantas vagas',
     'joinville': 'É para Joinville',
     'impulsionar': 'É para impulsionar',
-    'temDataDefinida': 'Tem data definida'
+    'temDataDefinida': 'Tem data definida',
+    'temHorarioDefinido': 'Tem horário definido'
   };
 
   // Validar campos sempre obrigatórios
@@ -1302,6 +1321,14 @@ function validarCamposCondicionais() {
     }
   } else if (elementos.joinville.value === "Sim") {
     const bairrosJoinville = document.querySelector('select[name="bairros"]');
+    }
+    
+    if (!outrosBairros.value.trim()) {
+      erros.push("Bairros são obrigatórios quando não for Joinville");
+      outrosBairros.classList.add('invalid');
+    }
+  } else if (elementos.joinville.value === "Sim") {
+    const bairrosJoinville = document.querySelector('select[name="bairros"]');
     if (!bairrosJoinville.value || bairrosJoinville.selectedOptions.length === 0) {
       erros.push("Selecione os bairros de Joinville");
       bairrosJoinville.classList.add('invalid');
@@ -1327,7 +1354,7 @@ function validarCamposCondicionais() {
     Object.entries(camposNumericos).forEach(([campo, label]) => {
       const input = document.querySelector(`input[name="${campo}"]`);
       if (!input.value.trim()) {
-        erros.push(`${label} é obrigatório para impulsionamento`);
+        erros.push(`${label} é obrigatório`);
         input.classList.add('invalid');
       }
     });
@@ -1559,4 +1586,4 @@ document.querySelector('input[name="idadeMinima"]').addEventListener('change', f
   validarCampo(idadeMax);
 });
 
-// ...existing code...
+
