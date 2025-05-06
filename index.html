@@ -1,344 +1,1194 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário de Vaga</title>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link rel="stylesheet" href="formulario.css">
-  </head>
-  <body>
-    <p><strong>📢 Este formulário garante que sua vaga seja divulgada com
-        rapidez e agilidade. Sem as informações obrigatórias podem demorar mais tempo por falta de informação.</strong></p>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário de Vaga</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .remove-btn {
+      color: #ef4444;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+    .error-message {
+      color: #ef4444;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+    .form-section {
+      display: none;
+    }
+    .form-section.active {
+      display: block;
+    }
+    select[multiple] {
+      height: 150px;
+    }
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+    .optional {
+      color: #6b7280;
+      font-style: italic;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <!-- Header with important notices -->
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded">
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <i class="fas fa-bullhorn text-blue-500 text-xl mr-3 mt-1"></i>
+        </div>
+        <div>
+          <p class="font-bold text-blue-800"><i class="fas fa-exclamation-circle mr-1"></i> Este formulário garante que sua vaga seja divulgada com rapidez e visibilidade.</p>
+          <p class="text-blue-700 mt-1"><i class="fas fa-exclamation-triangle mr-1"></i> Vagas sem esse envio podem demorar mais para irem ao ar.</p>
+        </div>
+      </div>
+    </div>
 
-    <p><strong>Esse formulário leva menos de 5 minutos para ser preenchido.</strong></p>
+    <!-- Progress tracker -->
+    <div class="flex mb-8 overflow-x-auto">
+      <div class="flex space-x-4">
+        <div class="flex items-center">
+          <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">1</div>
+          <div class="ml-2 text-sm font-medium text-gray-700">Dados Básicos</div>
+        </div>
+        <div class="flex items-center">
+          <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">2</div>
+          <div class="ml-2 text-sm font-medium text-gray-700">Impulsionamento</div>
+        </div>
+      </div>
+    </div>
 
-    <form id="vagaForm" class="form-grid">
+    <!-- Tip box -->
+    <div class="bg-blue-100 border-l-4 border-blue-500 p-4 mb-6 rounded">
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <i class="fas fa-lightbulb text-blue-500 text-xl mr-3 mt-1"></i>
+        </div>
+        <div>
+          <p class="text-blue-800">Essa etapa ajuda o marketing a entender melhor como divulgar sua vaga.</p>
+        </div>
+      </div>
+    </div>
+
+    <form id="vagaForm" class="bg-white shadow-md rounded-lg p-6">
+      <!-- Section 1 - Job Data -->
       <section id="sessao1" class="form-section active">
-        <h2>📂 Sessão 1 - Dados da Vaga</h2>
-        <!-- Campos obrigatórios com * -->
-        <label
-          title="Insira o nome completo do analista respons&aacute;vel">Nome do
-          analista:<span class="required"></span><span
-            class="info-icon">ℹ️</span></label>
-        <input name="analista" required type="text" />
+        <h2 class="text-2xl font-bold text-blue-700 border-b border-blue-200 pb-3 mb-6 flex items-center">
+          <i class="fas fa-file-alt mr-2"></i> Sessão 1 - Dados da Vaga
+        </h2>
 
-        <label title="Insira o n&uacute;mero de WhatsApp com DDD">WhatsApp:<span
-            class="required"></span><span class="info-icon">ℹ️</span></label>
-        <input name="whatsapp" required type="tel" />
+        <!-- Analyst Info -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="analista">
+            Nome do analista <span class="text-red-500">*</span>
+            <span class="text-blue-500 cursor-help ml-1" title="Insira o nome completo do analista responsável">
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <input id="analista" name="analista" type="text" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
 
-        <div id="avisoLogo" style="display: none;">
-          📌 Para melhor divulgação, envie o logo em formato vetorial (AI, SVG
-          ou EPS). Caso não tenha, podemos usar versão JPG/PNG.
+        <!-- WhatsApp -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="whatsapp">
+            WhatsApp <span class="text-red-500">*</span>
+            <span class="text-blue-500 cursor-help ml-1" title="Insira o número de WhatsApp com DDD">
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <input id="whatsapp" name="whatsapp" type="tel" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
-        <label title="Selecione se a logo da empresa pode ser divulgada">Pode
-          divulgar a logo?<span class="required"></span><span
-            class="info-icon">ℹ️</span></label>
-        <select id="divulgaLogo" required>
-          <option value>Selecione</option>
-          <option value="Sim">Sim</option>
-          <option value="N&atilde;o">N&atilde;o</option>
-        </select>
-        <div id="nomeEmpresaContainer" style="display: none;">
-          <label title="Insira o nome da empresa">Nome da empresa:<span
-              class="info-icon">ℹ️</span></label>
-          <input name="empresa" type="text" />
+
+        <!-- Logo Disclosure -->
+        <div id="avisoLogo" class="hidden bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4 rounded">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <i class="fas fa-info-circle text-yellow-500 text-xl mr-3 mt-1"></i>
+            </div>
+            <div>
+              <p class="text-yellow-800">Para melhor divulgação, envie o logo em formato vetorial (AI, SVG ou EPS). Caso não tenha, podemos usar versão JPG/PNG.</p>
+            </div>
+          </div>
         </div>
-        <label
-          title="Selecione se a vaga &eacute; para produ&ccedil;&atilde;o">&Eacute;
-          produ&ccedil;&atilde;o?<span class="required"></span><span
-            class="info-icon">ℹ️</span></label>
-        <select id="producao" required>
-          <option value>Selecione</option>
-          <option value="Sim">Sim</option>
-          <option value="N&atilde;o">N&atilde;o</option>
-        </select>
-        <p id="avisoMarketing" style="display: none;">⚠️ O marketing N&Atilde;O
-          est&aacute; permitido divulgar vagas de produ&ccedil;&atilde;o sem
-          logo.</p>
-        <label>Comparecimento presencial?</label>
-        <select id="presencial" required>
-          <option value>Selecione</option>
-          <option value="RHBrasil">RHBrasil</option>
-          <option value="Outro">Outro lugar</option>
-        </select>
-        <!-- Placeholder com exemplo no campo de local -->
-        <!-- Um link modelo ajuda a evitar erros de preenchimento e dá clareza sobre o que se espera -->
-        <div id="outroLugar" style="display: none;">
-          <label>Local para comparecer (Google Maps link):</label>
-          <input name="local" required type="url"
-            placeholder="https://goo.gl/maps/xyz123" />
-        </div>
-        <div id="eventoContainer" style="display: none;">
-          <label>&Eacute; evento/feir&atilde;o/mutir&atilde;o?</label>
-          <select name="evento">
-            <option value="N&atilde;o">N&atilde;o</option>
-            <option value="Feir&atilde;o">Feir&atilde;o</option>
-            <option value="Mutir&atilde;o">Mutir&atilde;o</option>
+
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="divulgaLogo">
+            Pode divulgar a logo? <span class="text-red-500">*</span>
+            <span class="text-blue-500 cursor-help ml-1" title="Selecione se a logo da empresa pode ser divulgada">
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <select id="divulgaLogo" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Selecione</option>
+            <option value="Sim">Sim</option>
+            <option value="N&atilde;o">Não</option>
           </select>
         </div>
-        <label>Nome do cargo:<span class="required"></span></label>
-        <input name="cargo" required type="text" />
-        <label
-          title="Se não tiver data definida, o padrão será de Segunda à Sexta">Tem
-          data definida?<span class="required"></span><span
-            class="info-icon">ℹ️</span></label>
-        <select id="temDataDefinida" required>
-          <option value>Selecione</option>
-          <option value="Sim">Sim</option>
-          <option value="Não">Não</option>
-        </select>
 
-        <div id="datasContainer" style="display: none;">
-          <div class="tipo-container">
-            <label><input type="radio" name="tipoData" value="unico" checked />
-              Data única</label>
-            <label><input type="radio" name="tipoData" value="intervalo" />
-              Intervalo</label>
+        <!-- Company Name (conditional) -->
+        <div id="nomeEmpresaContainer" class="hidden mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="empresa">
+            Nome da empresa <span class="text-red-500">*</span>
+            <span class="text-blue-500 cursor-help ml-1" title="Insira o nome da empresa">
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <input id="empresa" name="empresa" type="text"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Production Job -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="producao">
+            É produção? <span class="text-red-500">*</span>
+            <span class="text-blue-500 cursor-help ml-1" title="Selecione se a vaga é para produção">
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <select id="producao" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Selecione</option>
+            <option value="Sim">Sim</option>
+            <option value="N&atilde;o">Não</option>
+          </select>
+        </div>
+
+        <!-- Marketing Warning (conditional) -->
+        <div id="avisoMarketing" class="hidden bg-red-50 border-l-4 border-red-400 p-4 mb-4 rounded">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <i class="fas fa-exclamation-triangle text-red-500 text-xl mr-3 mt-1"></i>
+            </div>
+            <div>
+              <p class="text-red-800">O marketing NÃO está permitido divulgar vagas de produção sem logo.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- In-person Attendance -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="presencial">
+            Comparecimento presencial? <span class="text-red-500">*</span>
+          </label>
+          <select id="presencial" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Selecione</option>
+            <option value="RHBrasil">RHBrasil</option>
+            <option value="Outro">Outro lugar</option>
+          </select>
+        </div>
+
+        <!-- Other Location (conditional) -->
+        <div id="outroLugar" class="hidden mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="local">
+            Local para comparecer (Google Maps link) <span class="text-red-500">*</span>
+          </label>
+          <input id="local" name="local" type="url" placeholder="https://goo.gl/maps/xyz123"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Event Type (conditional) -->
+        <div id="eventoContainer" class="hidden mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="evento">
+            É evento/feirão/mutirão?
+          </label>
+          <select id="evento" name="evento"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="N&atilde;o">Não</option>
+            <option value="Feir&atilde;o">Feirão</option>
+            <option value="Mutir&atilde;o">Mutirão</option>
+          </select>
+        </div>
+
+        <!-- Job Title -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="cargo">
+            Nome do cargo <span class="text-red-500">*</span>
+          </label>
+          <input id="cargo" name="cargo" type="text" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <!-- Vaga Recorrente -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="recorrente">
+            É uma vaga recorrente? <span class="text-red-500">*</span>
+          </label>
+          <select id="recorrente" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Selecione</option>
+            <option value="Sim">Sim</option>
+            <option value="N&atilde;o">Não</option>
+          </select>
+        </div>
+
+        <!-- Média Mensal (condicional) -->
+        <div id="mediaMensalContainer" class="hidden mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="mediaMensal">
+            Qual a média mensal? <span class="text-red-500">*</span>
+          </label>
+          <input id="mediaMensal" name="mediaMensal" type="number" 
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Tipo de Vaga -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="tipoVaga">
+            Tipo de vaga <span class="text-red-500">*</span>
+          </label>
+          <select id="tipoVaga" name="tipoVaga" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Selecione</option>
+            <option value="Efetivo">Efetivo</option>
+            <option value="Temporário">Temporário</option>
+          </select>
+        </div>
+
+        <!-- Defined Date -->
+        <div class="mb-4">
+        
+          <label class="block text-gray-700 font-medium mb-2" for="temDataDefinida">
+            Tem data definida? <span class="text-red-500">*</span>
+            <span class="text-blue-500 cursor-help ml-1" title="Se não tiver data definida, o padrão será de Segunda à Sexta">
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <select id="temDataDefinida" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Selecione</option>
+            <option value="Sim">Sim</option>
+            <option value="Não">Não</option>
+          </select>
+        </div>
+
+        <!-- Date Selection (conditional) -->
+        <div id="datasContainer" class="hidden mb-4">
+          <div class="tipo-container flex space-x-4 mb-4">
+            <label class="inline-flex items-center">
+              <input type="radio" name="tipoData" value="unico" checked class="form-radio text-blue-600">
+              <span class="ml-2">Data única</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input type="radio" name="tipoData" value="intervalo" class="form-radio text-blue-600">
+              <span class="ml-2">Intervalo</span>
+            </label>
           </div>
 
+          <!-- Single Date -->
           <div id="dataUnica">
             <div id="datasUnicas">
-              <div class="campo-data">
-                <label>Data:</label>
-                <input type="date" name="datas[]" required />
-                <span class="remove-btn"
-                  onclick="removerData(this)">&times;</span>
+              <div class="campo-data flex items-center mb-2">
+                <label class="mr-2">Data:</label>
+                <input type="date" name="datas[]" required
+                  class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <span class="remove-btn ml-2" onclick="removerData(this)"><i class="fas fa-times"></i></span>
               </div>
             </div>
-            <button type="button" onclick="adicionarData()">+ Adicionar
-              data</button>
+            <button type="button" onclick="adicionarData()"
+              class="mt-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition">
+              <i class="fas fa-plus mr-1"></i> Adicionar data
+            </button>
           </div>
 
-          <div id="dataIntervalo" style="display: none;">
-            <div class="campo-intervalo">
+          <!-- Date Range -->
+          <div id="dataIntervalo" class="hidden">
+            <div class="campo-intervalo grid grid-cols-5 gap-2 items-center mb-2">
               <label>De</label>
-              <input type="date" name="dataInicio[]" required />
+              <input type="date" name="dataInicio[]" required
+                class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
               <label>até</label>
-              <input type="date" name="dataFim[]" required />
-              <span class="remove-btn"
-                onclick="removerIntervalo(this)">&times;</span>
+              <input type="date" name="dataFim[]" required
+                class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <span class="remove-btn ml-2" onclick="removerIntervalo(this)"><i class="fas fa-times"></i></span>
             </div>
-            <button type="button" onclick="adicionarIntervalo()">+ Adicionar
-              intervalo</button>
+            <button type="button" onclick="adicionarIntervalo()"
+              class="mt-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition">
+              <i class="fas fa-plus mr-1"></i> Adicionar intervalo
+            </button>
           </div>
         </div>
-        <label title="Se não tiver horário definido, o padrão será das 7:30 às 17:00">
-          Tem horário definido?<span class="required"></span>
-          <span class="info-icon">ℹ️</span>
-        </label>
-        <select id="temHorarioDefinido" required>
-          <option value="">Selecione</option>
-          <option value="Sim">Sim</option>
-          <option value="Não">Não</option>
-        </select>
 
-        
-        <div id="horariosContainer" style="display: none;">
-          <div class="tipo-container">
-            <label><input type="radio" name="tipoHorario" value="unico"
-                checked /> Horário único</label>
-            <label><input type="radio" name="tipoHorario" value="intervalo" />
-              Intervalo</label>
+        <!-- Defined Time -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="temHorarioDefinido">
+            Tem horário definido? <span class="text-red-500">*</span>
+            <span class="text-blue-500 cursor-help ml-1" title="Se não tiver horário definido, o padrão será das 7:30 às 17:00">
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <select id="temHorarioDefinido" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Selecione</option>
+            <option value="Sim">Sim</option>
+            <option value="Não">Não</option>
+          </select>
+        </div>
+
+        <!-- Time Selection (conditional) -->
+        <div id="horariosContainer" class="hidden mb-4">
+          <div class="tipo-container flex space-x-4 mb-4">
+            <label class="inline-flex items-center">
+              <input type="radio" name="tipoHorario" value="unico" checked class="form-radio text-blue-600">
+              <span class="ml-2">Horário único</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input type="radio" name="tipoHorario" value="intervalo" class="form-radio text-blue-600">
+              <span class="ml-2">Intervalo</span>
+            </label>
           </div>
 
+          <!-- Single Time -->
           <div id="horarioUnico">
-            <div class="campo-horario">
-              <label>Horário:</label>
-              <input type="time" name="horarios[]" required />
-              <span class="remove-btn"
-                onclick="removerHorario(this)">&times;</span>
+            <div class="campo-horario flex items-center mb-2">
+              <label class="mr-2">Horário:</label>
+              <input type="time" name="horarios[]" required
+                class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <span class="remove-btn ml-2" onclick="removerHorario(this)"><i class="fas fa-times"></i></span>
             </div>
-            <button type="button" onclick="adicionarHorario()">+ Adicionar
-              horário</button>
+            <button type="button" onclick="adicionarHorario()"
+              class="mt-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition">
+              <i class="fas fa-plus mr-1"></i> Adicionar horário
+            </button>
           </div>
 
-          <div id="horarioIntervalo" style="display: none;">
-            <div class="campo-intervalo">
+          <!-- Time Range -->
+          <div id="horarioIntervalo" class="hidden">
+            <div class="campo-intervalo grid grid-cols-5 gap-2 items-center mb-2">
               <label>Das</label>
-              <input type="time" name="horaInicio[]" required />
+              <input type="time" name="horaInicio" required
+                class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
               <label>às</label>
-              <input type="time" name="horaFim[]" required />
-              <span class="remove-btn"
-                onclick="removerIntervalo(this)">&times;</span>
+              <input type="time" name="horaFim" required
+                class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
-            <button type="button" onclick="adicionarIntervalo()">+ Adicionar
-              intervalo</button>
           </div>
         </div>
-        <!-- Placeholder sugestivo para o número de vagas -->
-        <!-- Dar exemplos visuais torna o campo mais intuitivo e reduz dúvidas de preenchimento -->
-        <label>Quantas vagas:<span class="required"></span></label>
-        <input name="vagas" required type="number"
-          placeholder="Ex: 1, 3, 10 ou 400" />
-        <label>Benef&iacute;cios:<span class="optional"></span></label>
-        <textarea name="beneficios"></textarea>
-        <label>Requisitos:<span class="optional"></span></label>
-        <textarea name="requisitos"></textarea>
-        <label>Turnos:<span class="optional"></span></label>
-        <input name="turnos" type="text" />
-        <label>&Eacute; para Joinville?<span class="required"></span></label>
-        <select id="joinville" required>
-          <option value>Selecione</option>
-          <option value="Sim">Sim</option>
-          <option value="N&atilde;o">N&atilde;o</option>
-        </select>
-        <div id="cidadeOutras" style="display: none;">
-          <label>Qual cidade?</label>
-          <input name="outraCidade" required type="text" />
+
+        <!-- Number of Positions -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="vagas">
+            Quantas vagas <span class="text-red-500">*</span>
+          </label>
+          <input id="vagas" name="vagas" type="number" required placeholder="Ex: 1, 3, 10 ou 400"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
-        <!-- Texto informal e orientado no campo de notas -->
-        <!-- Estimula o preenchimento com informações valiosas que muitas vezes seriam esquecidas -->
-        <label>Notas adicionais (algo que só você sabe e ajuda muito?):<span
-            class="optional"></span></label>
-        <textarea name="notas"></textarea>
-        <label>&Eacute; para impulsionar?<span class="required"></span></label>
-        <select id="impulsionar" required>
-          <option value="Não">Não</option>
-          <option value="Sim">Sim</option>
-        </select>
-        <div id="avisoImpulsionamento" style="display: none;">
-          ⚠️ Não recomendamos o impulsionamento para comparecer em menos de 4
-          dias
+
+        <!-- Benefits -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="beneficios">
+            Benefícios <span class="optional">(Opcional)</span>
+          </label>
+          <textarea id="beneficios" name="beneficios" rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
         </div>
-        <!-- Botão de navegação no final da seção 1 -->
-        <div class="nav-buttons">
-          <button type="button" class="salvar" onclick="salvarPDF()"
-            id="btnFinalizarPDF">
-            ✅ Finalizar e Salvar como PDF
+
+        <!-- Requirements -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="requisitos">
+            Requisitos <span class="optional">(Opcional)</span>
+          </label>
+          <textarea id="requisitos" name="requisitos" rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+
+        <!-- Turnos -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="turnos">
+            Turnos <span class="optional">(Opcional)</span>
+          </label>
+          <input id="turnos" name="turnos" type="text"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Joinville -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="joinville">
+            É para Joinville? <span class="text-red-500">*</span>
+          </label>
+          <select id="joinville" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Selecione</option>
+            <option value="Sim">Sim</option>
+            <option value="N&atilde;o">Não</option>
+          </select>
+        </div>
+
+        <!-- Other City (conditional) -->
+        <div id="cidadeOutras" class="hidden mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="outraCidade">
+            Qual cidade? <span class="text-red-500">*</span>
+          </label>
+          <input id="outraCidade" name="outraCidade" type="text" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Additional Notes -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="notas">
+            Notas adicionais (algo que só você sabe e ajuda muito?) <span class="optional">(Opcional)</span>
+          </label>
+          <textarea id="notas" name="notas" rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+
+        <!-- Boost -->
+        <div class="mb-6">
+          <label class="block text-gray-700 font-medium mb-2" for="impulsionar">
+            É para impulsionar? <span class="text-red-500">*</span>
+          </label>
+          <select id="impulsionar" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="Não">Não</option>
+            <option value="Sim">Sim</option>
+          </select>
+        </div>
+
+        <!-- Boost Warning (conditional) -->
+        <div id="avisoImpulsionamento" class="hidden bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <i class="fas fa-exclamation-triangle text-yellow-500 text-xl mr-3 mt-1"></i>
+            </div>
+            <div>
+              <p class="text-yellow-800">Não recomendamos o impulsionamento para comparecer em menos de 4 dias</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between mt-8">
+          <button type="button" class="px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition flex items-center"
+            onclick="salvarPDF()" id="btnFinalizar">
+            <i class="fas fa-check-circle mr-2"></i> Finalizar e Salvar como PDF
           </button>
-          <button type="button" class="continuar" onclick="validarSessao(1)"
-            id="btnContinuar" style="display: none;">
-            Continuar para Impulsionamento ➡️
+          <button type="button" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition flex items-center"
+            onclick="validarSessao(1)" id="btnContinuar" style="display: none;">
+            Continuar para Impulsionamento <i class="fas fa-arrow-right ml-2"></i>
           </button>
         </div>
       </section>
 
+      <!-- Section 2 - Boost -->
       <section id="sessao2" class="form-section">
-        <h2>📂 Sessão 2 - Impulsionamento</h2>
-        <p id="avisoImpulsionamento4dias">⚠️ Não recomendamos o impulsionamento para comparecer em menos de 4 dias</p>
+        <h2 class="text-2xl font-bold text-blue-700 border-b border-blue-200 pb-3 mb-6 flex items-center">
+          <i class="fas fa-rocket mr-2"></i> Sessão 2 - Impulsionamento
+        </h2>
 
-        <div class="form-group">
-          <label>Gênero:<span class="required"></span></label>
-          <select name="genero" required>
+        <!-- Boost Warning -->
+        <div id="avisoImpulsionamento4dias" class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <i class="fas fa-exclamation-triangle text-yellow-500 text-xl mr-3 mt-1"></i>
+            </div>
+            <div>
+              <p class="text-yellow-800">Não recomendamos o impulsionamento para comparecer em menos de 4 dias</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gender -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="genero">
+            Gênero <span class="text-red-500">*</span>
+          </label>
+          <select id="genero" name="genero" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="Ambos" selected>Ambos</option>
             <option value="Masculino">Masculino</option>
             <option value="Feminino">Feminino</option>
           </select>
-
-          <div class="idade-container">
-            <div>
-              <label>Idade mínima:<span class="required"></span></label>
-              <input name="idadeMinima" type="number" value="18" required
-                min="18" max="100" />
-            </div>
-            <div>
-              <label>Idade máxima:<span class="required"></span></label>
-              <input name="idadeMaxima" type="number" value="55" required
-                min="18" max="100" />
-            </div>
-          </div>
-
-          <div class="bairros-section">
-            <div class="bairros-container">
-              <div class="bairros-search">
-                <input type="text" placeholder="Buscar bairro..." id="bairroSearch">
-              </div>
-              <div class="bairros-list">
-                <select multiple="multiple" name="bairros" required>
-                  <option value="toda">Toda Joinville</option>
-                  <optgroup label="CentroNorte">
-                    <option value="Centro">Centro</option>
-                    <option value="Bom Retiro">Bom Retiro</option>
-                    <option value="Pirabeiraba/Centro">Pirabeiraba/Centro</option>
-                    <option value="América">América</option>
-                    <option value="Atiradores">Atiradores</option>
-                    <option value="Costa e Silva">Costa e Silva</option>
-                    <option value="Dona Francisca">Dona Francisca</option>
-                    <option value="Glória">Glória</option>
-                    <option value="Jardim Paraíso">Jardim Paraíso</option>
-                    <option value="Jardim Sofia">Jardim Sofia</option>
-                    <option value="Rio Bonito">Rio Bonito</option>
-                    <option value="Saguaçu">Saguaçu</option>
-                    <option value="Santo Antônio">Santo Antônio</option>
-                    <option value="Santa Catarina">Santa Catarina</option>
-                    <option value="Zona Industrial Norte">Zona Industrial
-                      Norte</option>
-                  </optgroup>
-                  <optgroup label="Zona Leste">
-                    <option value="Aventureiro">Aventureiro</option>
-                    <option value="Boa Vista">Boa Vista</option>
-                    <option value="Comasa">Comasa</option>
-                    <option value="Espinheiros">Espinheiros</option>
-                    <option value="Iriri&uacute;">Iriri&uacute;</option>
-                    <option value="Jardim Iriri&uacute;">Jardim
-                      Iriri&uacute;</option>
-                    <option value="Vila Cubat&atilde;o">Vila
-                      Cubat&atilde;o</option>
-                    <option value="Zona Industrial Tupy">Zona Industrial
-                      Tupy</option>
-                  </optgroup>
-                  <optgroup label="Zona Sul">
-                    <option value="Adhemar Garcia">Adhemar Garcia</option>
-                    <option value="Anita Garibaldi">Anita Garibaldi</option>
-                    <option value="Boehmerwald">Boehmerwald</option>
-                    <option value="Bucarein">Bucarein</option>
-                    <option value="F&aacute;tima">F&aacute;tima</option>
-                    <option value="Floresta">Floresta</option>
-                    <option value="Guanabara">Guanabara</option>
-                    <option value="Itaum">Itaum</option>
-                    <option value="Itinga">Itinga</option>
-                    <option value="Jarivatuba">Jarivatuba</option>
-                    <option value="Jo&atilde;o Costa">Jo&atilde;o Costa</option>
-                    <option value="Paranaguamirim">Paranaguamirim</option>
-                    <option value="Parque Guarani">Parque Guarani</option>
-                    <option value="Petr&oacute;polis">Petr&oacute;polis</option>
-                    <option value="Profipo">Profipo</option>
-                  </optgroup>
-                  <optgroup label="Zona Oeste">
-                    <option value="Morro do Meio">Morro do Meio</option>
-                    <option value="Nova Bras&iacute;lia">Nova
-                      Bras&iacute;lia</option>
-                    <option value="S&atilde;o Marcos">S&atilde;o Marcos</option>
-                    <option value="Ulysses Guimar&atilde;es">Ulysses
-                      Guimar&atilde;es</option>
-                    <option value="Vila Nova">Vila Nova</option>
-                  </optgroup>
-                </select>
-              </div>
-            </div>
-            <div class="outros-bairros" style="display: none;">
-              <label>Quais bairros:</label>
-              <input name="outrosBairros" required type="text" />
-            </div>
-          </div>
-
-          <label>Quantos dias de impulsionamento?<span
-              class="required"></span></label>
-          <input name="dias" type="number" value="4" required min="1" />
-
-          <label>Qual orçamento sugerido por dia?<span
-              class="required"></span></label>
-          <input name="orcamento" type="text" value="R$50,00" required />
         </div>
 
-        <div class="nav-buttons">
-          <button type="button" class="voltar" onclick="voltarSessao(1)">
-            ⬅️ Voltar
+        <!-- Age Range -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-700 font-medium mb-2" for="idadeMinima">
+              Idade mínima <span class="text-red-500">*</span>
+            </label>
+            <input id="idadeMinima" name="idadeMinima" type="number" value="18" required min="18" max="100"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-2" for="idadeMaxima">
+              Idade máxima <span class="text-red-500">*</span>
+            </label>
+            <input id="idadeMaxima" name="idadeMaxima" type="number" value="55" required min="18" max="100"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+
+        <!-- Boost Days -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="dias">
+            Quantos dias de impulsionamento? <span class="text-red-500">*</span>
+          </label>
+          <input id="dias" name="dias" type="number" value="4" required min="1"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Daily Budget -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="orcamento">
+            Qual orçamento sugerido por dia? <span class="text-red-500">*</span>
+          </label>
+          <input id="orcamento" name="orcamento" type="text" value="R$50,00" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Neighborhoods -->
+        <div id="bairrosJoinvilleContainer" class="mb-6">
+          <label class="block text-gray-700 font-medium mb-2" for="bairros">
+            Quais bairros? <span class="text-red-500">*</span>
+          </label>
+          
+          <div class="bairros-container bg-white border border-gray-300 rounded-md overflow-hidden">
+            <div class="bairros-search p-2 border-b border-gray-300">
+              <input type="text" placeholder="Buscar bairro..." id="bairroSearch"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="bairros-list p-2">
+              <select multiple="multiple" name="bairros" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="toda">Toda Joinville</option>
+                <optgroup label="CentroNorte">
+                  <option value="Centro">Centro</option>
+                  <option value="Bom Retiro">Bom Retiro</option>
+                  <option value="Pirabeiraba/Centro">Pirabeiraba/Centro</option>
+                  <option value="América">América</option>
+                  <option value="Atiradores">Atiradores</option>
+                  <option value="Costa e Silva">Costa e Silva</option>
+                  <option value="Dona Francisca">Dona Francisca</option>
+                  <option value="Glória">Glória</option>
+                  <option value="Jardim Paraíso">Jardim Paraíso</option>
+                  <option value="Jardim Sofia">Jardim Sofia</option>
+                  <option value="Rio Bonito">Rio Bonito</option>
+                  <option value="Saguaçu">Saguaçu</option>
+                  <option value="Santo Antônio">Santo Antônio</option>
+                  <option value="Santa Catarina">Santa Catarina</option>
+                  <option value="Zona Industrial Norte">Zona Industrial Norte</option>
+                </optgroup>
+                <optgroup label="Zona Leste">
+                  <option value="Aventureiro">Aventureiro</option>
+                  <option value="Boa Vista">Boa Vista</option>
+                  <option value="Comasa">Comasa</option>
+                  <option value="Espinheiros">Espinheiros</option>
+                  <option value="Iriri&uacute;">Iririú</option>
+                  <option value="Jardim Iriri&uacute;">Jardim Iririú</option>
+                  <option value="Vila Cubat&atilde;o">Vila Cubatão</option>
+                  <option value="Zona Industrial Tupy">Zona Industrial Tupy</option>
+                </optgroup>
+                <optgroup label="Zona Sul">
+                  <option value="Adhemar Garcia">Adhemar Garcia</option>
+                  <option value="Anita Garibaldi">Anita Garibaldi</option>
+                  <option value="Boehmerwald">Boehmerwald</option>
+                  <option value="Bucarein">Bucarein</option>
+                  <option value="F&aacute;tima">Fátima</option>
+                  <option value="Floresta">Floresta</option>
+                  <option value="Guanabara">Guanabara</option>
+                  <option value="Itaum">Itaum</option>
+                  <option value="Itinga">Itinga</option>
+                  <option value="Jarivatuba">Jarivatuba</option>
+                  <option value="Jo&atilde;o Costa">João Costa</option>
+                  <option value="Paranaguamirim">Paranaguamirim</option>
+                  <option value="Parque Guarani">Parque Guarani</option>
+                  <option value="Petr&oacute;polis">Petrópolis</option>
+                  <option value="Profipo">Profipo</option>
+                </optgroup>
+                <optgroup label="Zona Oeste">
+                  <option value="Morro do Meio">Morro do Meio</option>
+                  <option value="Nova Bras&iacute;lia">Nova Brasília</option>
+                  <option value="S&atilde;o Marcos">São Marcos</option>
+                  <option value="Ulysses Guimar&atilde;es">Ulysses Guimarães</option>
+                  <option value="Vila Nova">Vila Nova</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Other Neighborhoods -->
+        <div id="outrosBairrosContainer" class="hidden mb-6">
+          <label class="block text-gray-700 font-medium mb-2" for="outrosBairros">
+            Quais bairros? <span class="text-red-500">*</span>
+          </label>
+          <input id="outrosBairros" name="outrosBairros" type="text"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between mt-8">
+          <button type="button" class="px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 transition flex items-center"
+            onclick="voltarSessao(1)">
+            <i class="fas fa-arrow-left mr-2"></i> Voltar
           </button>
-          <button type="button" class="salvar" onclick="salvarPDF()">
-            ✅ Finalizar e Salvar como PDF
+          <button type="button" class="px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition flex items-center"
+            onclick="salvarPDF()">
+            <i class="fas fa-check-circle mr-2"></i> Finalizar e Salvar como PDF
           </button>
         </div>
       </section>
 
-      <!-- Feedback visual -->
-      <div id="errorMessages" class="error-container" style="display: none;">
-        <p>Por favor, corrija os seguintes erros:</p>
-        <ul></ul>
+      <!-- Error Messages -->
+      <div id="errorMessages" class="hidden bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <i class="fas fa-exclamation-circle text-red-500 text-xl mr-3 mt-1"></i>
+          </div>
+          <div>
+            <p class="font-bold text-red-800">Por favor, corrija os seguintes erros:</p>
+            <ul id="errorList" class="list-disc pl-5 mt-2 text-red-700"></ul>
+          </div>
+        </div>
       </div>
     </form>
-    <script type="module" src="formulario.js"></script>
-  </body>
+  </div>
+
+  <script>
+    // Initialize form on load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set up all conditional fields
+      setupConditionalFields();
+      
+      // Set up validation for age fields
+      setupAgeValidation();
+      
+      // Set up date validation
+      setupDateValidation();
+    });
+
+    // Show/hide conditional fields
+    function setupConditionalFields() {
+      // Logo disclosure
+      document.getElementById('divulgaLogo').addEventListener('change', function() {
+        const avisoLogo = document.getElementById('avisoLogo');
+        const nomeEmpresaContainer = document.getElementById('nomeEmpresaContainer');
+        
+        if (this.value === 'Sim') {
+          avisoLogo.classList.remove('hidden');
+          nomeEmpresaContainer.classList.add('hidden');
+          document.getElementById('empresa').removeAttribute('required');
+        } else if (this.value === 'N&atilde;o') {
+          avisoLogo.classList.add('hidden');
+          nomeEmpresaContainer.classList.remove('hidden');
+          document.getElementById('empresa').setAttribute('required', 'required');
+        } else {
+          avisoLogo.classList.add('hidden');
+          nomeEmpresaContainer.classList.add('hidden');
+          document.getElementById('empresa').removeAttribute('required');
+        }
+        
+        // Check marketing warning
+        checkMarketingWarning();
+      });
+
+      // Production job
+      document.getElementById('producao').addEventListener('change', function() {
+        checkMarketingWarning();
+      });
+
+      // In-person attendance
+      document.getElementById('presencial').addEventListener('change', function() {
+        const outroLugar = document.getElementById('outroLugar');
+        const eventoContainer = document.getElementById('eventoContainer');
+        
+        if (this.value === 'Outro') {
+          outroLugar.classList.remove('hidden');
+          eventoContainer.classList.remove('hidden');
+          document.getElementById('local').setAttribute('required', 'required');
+        } else {
+          outroLugar.classList.add('hidden');
+          eventoContainer.classList.add('hidden');
+          document.getElementById('local').removeAttribute('required');
+        }
+      });
+
+      // Defined date
+      document.getElementById('temDataDefinida').addEventListener('change', function() {
+        const datasContainer = document.getElementById('datasContainer');
+        if (this.value === 'Sim') {
+          datasContainer.classList.remove('hidden');
+        } else {
+          datasContainer.classList.add('hidden');
+        }
+      });
+
+      // Defined time
+      document.getElementById('temHorarioDefinido').addEventListener('change', function() {
+        const horariosContainer = document.getElementById('horariosContainer');
+        if (this.value === 'Sim') {
+          horariosContainer.classList.remove('hidden');
+        } else {
+          horariosContainer.classList.add('hidden');
+        }
+      });
+
+      // Joinville
+      document.getElementById('joinville').addEventListener('change', function() {
+        const cidadeOutras = document.getElementById('cidadeOutras');
+        const bairrosJoinvilleContainer = document.getElementById('bairrosJoinvilleContainer');
+        const outrosBairrosContainer = document.getElementById('outrosBairrosContainer');
+        
+        if (this.value === 'N&atilde;o') {
+          cidadeOutras.classList.remove('hidden');
+          bairrosJoinvilleContainer.classList.add('hidden');
+          outrosBairrosContainer.classList.remove('hidden');
+          document.getElementById('outraCidade').setAttribute('required', 'required');
+          document.getElementById('outrosBairros').setAttribute('required', 'required');
+          document.querySelector('select[name="bairros"]').removeAttribute('required');
+        } else {
+          cidadeOutras.classList.add('hidden');
+          bairrosJoinvilleContainer.classList.remove('hidden');
+          outrosBairrosContainer.classList.add('hidden');
+          document.getElementById('outraCidade').removeAttribute('required');
+          document.getElementById('outrosBairros').removeAttribute('required');
+          document.querySelector('select[name="bairros"]').setAttribute('required', 'required');
+        }
+      });
+
+      // Boost
+      document.getElementById('impulsionar').addEventListener('change', function() {
+        const avisoImpulsionamento = document.getElementById('avisoImpulsionamento');
+        const btnContinuar = document.getElementById('btnContinuar');
+        
+        if (this.value === 'Sim') {
+          avisoImpulsionamento.classList.remove('hidden');
+          btnContinuar.style.display = 'flex';
+        } else {
+          avisoImpulsionamento.classList.add('hidden');
+          btnContinuar.style.display = 'none';
+        }
+      });
+
+      // Toggle between date types
+      document.querySelectorAll('input[name="tipoData"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+          const dataUnica = document.getElementById('dataUnica');
+          const dataIntervalo = document.getElementById('dataIntervalo');
+          
+          if (this.value === 'unico') {
+            dataUnica.classList.remove('hidden');
+            dataIntervalo.classList.add('hidden');
+          } else {
+            dataUnica.classList.add('hidden');
+            dataIntervalo.classList.remove('hidden');
+          }
+        });
+      });
+
+      // Toggle between time types
+      document.querySelectorAll('input[name="tipoHorario"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+          const horarioUnico = document.getElementById('horarioUnico');
+          const horarioIntervalo = document.getElementById('horarioIntervalo');
+          
+          if (this.value === 'unico') {
+            horarioUnico.classList.remove('hidden');
+            horarioIntervalo.classList.add('hidden');
+          } else {
+            horarioUnico.classList.add('hidden');
+            horarioIntervalo.classList.remove('hidden');
+          }
+        });
+      });
+    }
+
+    // Check marketing warning condition
+    function checkMarketingWarning() {
+      const avisoMarketing = document.getElementById('avisoMarketing');
+      const divulgaLogo = document.getElementById('divulgaLogo').value;
+      const producao = document.getElementById('producao').value;
+      
+      if (divulgaLogo === 'N&atilde;o' && producao === 'Sim') {
+        avisoMarketing.classList.remove('hidden');
+      } else {
+        avisoMarketing.classList.add('hidden');
+      }
+    }
+
+    // Set up age validation
+    function setupAgeValidation() {
+      const idadeMinima = document.getElementById('idadeMinima');
+      const idadeMaxima = document.getElementById('idadeMaxima');
+      
+      idadeMinima.addEventListener('change', function() {
+        if (parseInt(this.value) < 18) {
+          this.value = 18;
+        }
+        if (parseInt(this.value) > parseInt(idadeMaxima.value)) {
+          idadeMaxima.value = this.value;
+        }
+      });
+      
+      idadeMaxima.addEventListener('change', function() {
+        if (parseInt(this.value) < parseInt(idadeMinima.value)) {
+          this.value = idadeMinima.value;
+        }
+        if (parseInt(this.value) > 100) {
+          this.value = 100;
+        }
+      });
+    }
+
+    // Set up date validation
+    function setupDateValidation() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // Validate single dates
+      document.addEventListener('change', function(e) {
+        if (e.target && e.target.name === 'datas[]') {
+          const selectedDate = new Date(e.target.value);
+          if (selectedDate < today) {
+            alert('Não é possível selecionar datas passadas');
+            e.target.value = '';
+          }
+        }
+        
+        // Validate date ranges
+        if (e.target && (e.target.name === 'dataInicio[]' || e.target.name === 'dataFim[]')) {
+          const parent = e.target.closest('.campo-intervalo');
+          if (parent) {
+            const inicio = new Date(parent.querySelector('input[name="dataInicio[]"]').value);
+            const fim = new Date(parent.querySelector('input[name="dataFim[]"]').value);
+            
+            if (inicio && fim && inicio > fim) {
+              alert('A data de início não pode ser depois da data de fim');
+              e.target.value = '';
+            }
+            
+            if (inicio && inicio < today) {
+              alert('Não é possível selecionar datas passadas');
+              parent.querySelector('input[name="dataInicio[]"]').value = '';
+            }
+            
+            if (fim && fim < today) {
+              alert('Não é possível selecionar datas passadas');
+              parent.querySelector('input[name="dataFim[]"]').value = '';
+            }
+          }
+        }
+      });
+    }
+
+    // Add/remove date fields
+    function adicionarData() {
+      const container = document.getElementById('datasUnicas');
+      const newField = document.createElement('div');
+      newField.className = 'campo-data flex items-center mb-2';
+      newField.innerHTML = `
+        <label class="mr-2">Data:</label>
+        <input type="date" name="datas[]" required
+          class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <span class="remove-btn ml-2" onclick="removerData(this)"><i class="fas fa-times"></i></span>
+      `;
+      container.appendChild(newField);
+    }
+
+    function removerData(element) {
+      element.parentElement.remove();
+    }
+
+    // Add/remove date range fields
+    function adicionarIntervalo() {
+      const container = document.getElementById('dataIntervalo');
+      const newField = document.createElement('div');
+      newField.className = 'campo-intervalo grid grid-cols-5 gap-2 items-center mb-2';
+      newField.innerHTML = `
+        <label>De</label>
+        <input type="date" name="dataInicio[]" required
+          class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <label>até</label>
+        <input type="date" name="dataFim[]" required
+          class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <span class="remove-btn ml-2" onclick="removerIntervalo(this)"><i class="fas fa-times"></i></span>
+      `;
+      container.insertBefore(newField, container.lastElementChild);
+    }
+
+    function removerIntervalo(element) {
+      element.parentElement.remove();
+    }
+
+    // Add/remove time fields
+    function adicionarHorario() {
+      const container = document.getElementById('horarioUnico');
+      const newField = document.createElement('div');
+      newField.className = 'campo-horario flex items-center mb-2';
+      newField.innerHTML = `
+        <label class="mr-2">Horário:</label>
+        <input type="time" name="horarios[]" required
+          class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <span class="remove-btn ml-2" onclick="removerHorario(this)"><i class="fas fa-times"></i></span>
+      `;
+      container.insertBefore(newField, container.lastElementChild);
+    }
+
+    function removerHorario(element) {
+      element.parentElement.remove();
+    }
+
+    // Form navigation
+    function validarSessao(sessaoAtual) {
+      const errorMessages = document.getElementById('errorMessages');
+      const errorList = document.getElementById('errorList');
+      
+      errorMessages.classList.add('hidden');
+      errorList.innerHTML = '';
+      
+      let isValid = true;
+
+      // Valida campos obrigatórios gerais exceto datas e horários
+      const requiredFields = document.querySelectorAll(`#sessao${sessaoAtual} [required]:not([name="datas[]"]):not([name="dataInicio[]"]):not([name="dataFim[]"]):not([name="horarios[]"]):not([name="horaInicio"]):not([name="horaFim"])`);
+      
+      requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+          isValid = false;
+          const fieldName = field.previousElementSibling ? field.previousElementSibling.textContent.trim() : 'Campo obrigatório';
+          const errorItem = document.createElement('li');
+          errorItem.textContent = `${fieldName} não preenchido`;
+          errorList.appendChild(errorItem);
+          field.classList.add('border-red-500');
+        }
+      });
+
+      // Validação específica para datas se estiver ativo
+      if (document.getElementById('temDataDefinida').value === 'Sim') {
+        const tipoData = document.querySelector('input[name="tipoData"]:checked').value;
+        
+        if (tipoData === 'unico') {
+          // Remove required de campos de intervalo
+          document.querySelectorAll('input[name="dataInicio[]"], input[name="dataFim[]"]').forEach(input => {
+            input.removeAttribute('required');
+          });
+          
+          // Verifica se pelo menos uma data única está preenchida
+          const datasUnicas = document.querySelectorAll('#dataUnica input[name="datas[]"]');
+          if (!Array.from(datasUnicas).some(d => d.value)) {
+            isValid = false;
+            const errorItem = document.createElement('li');
+            errorItem.textContent = 'Pelo menos uma data deve ser preenchida';
+            errorList.appendChild(errorItem);
+          }
+        } else {
+          // Remove required de datas únicas
+          document.querySelectorAll('input[name="datas[]"]').forEach(input => {
+            input.removeAttribute('required');
+          });
+          
+          // Valida intervalo de datas
+          const dataInicio = document.querySelector('input[name="dataInicio[]"]');
+          const dataFim = document.querySelector('input[name="dataFim[]"]');
+          
+          if (!dataInicio.value || !dataFim.value) {
+            isValid = false;
+            const errorItem = document.createElement('li');
+            errorItem.textContent = 'Data inicial e final são obrigatórias';
+            errorList.appendChild(errorItem);
+          }
+        }
+      }
+
+      // Validação específica para horários se estiver ativo
+      if (document.getElementById('temHorarioDefinido').value === 'Sim') {
+        const tipoHorario = document.querySelector('input[name="tipoHorario"]:checked').value;
+        
+        if (tipoHorario === 'unico') {
+          // Remove required de campos de intervalo
+          document.querySelector('input[name="horaInicio"]').removeAttribute('required');
+          document.querySelector('input[name="horaFim"]').removeAttribute('required');
+          
+          // Verifica se pelo menos um horário único está preenchido
+          const horariosUnicos = document.querySelectorAll('#horarioUnico input[name="horarios[]"]');
+          if (!Array.from(horariosUnicos).some(h => h.value)) {
+            isValid = false;
+            const errorItem = document.createElement('li');
+            errorItem.textContent = 'Pelo menos um horário deve ser preenchido';
+            errorList.appendChild(errorItem);
+          }
+        } else {
+          // Remove required de horários únicos
+          document.querySelectorAll('input[name="horarios[]"]').forEach(input => {
+            input.removeAttribute('required');
+          });
+          
+          // Valida intervalo de horário
+          const horaInicio = document.querySelector('input[name="horaInicio"]');
+          const horaFim = document.querySelector('input[name="horaFim"]');
+          
+          if (!horaInicio.value || !horaFim.value) {
+            isValid = false;
+            const errorItem = document.createElement('li');
+            errorItem.textContent = 'Horário inicial e final são obrigatórios';
+            errorList.appendChild(errorItem);
+          }
+        }
+      }
+
+      // Special validation for age range
+      const idadeMinima = parseInt(document.getElementById('idadeMinima').value);
+      const idadeMaxima = parseInt(document.getElementById('idadeMaxima').value);
+      if (idadeMinima > idadeMaxima) {
+        isValid = false;
+        const errorItem = document.createElement('li');
+        errorItem.textContent = 'Idade mínima não pode ser maior que idade máxima';
+        errorList.appendChild(errorItem);
+      }
+      
+      if (!isValid) {
+        errorMessages.classList.remove('hidden');
+        return;
+      }
+      
+      // If validation passes, go to next section
+      if (sessaoAtual === 1) {
+        document.getElementById('sessao1').classList.remove('active');
+        document.getElementById('sessao2').classList.add('active');
+        
+        // Check if we should show the boost warning for dates < 4 days
+        checkBoostDateWarning();
+      }
+    }
+
+    // Check if we should show boost date warning
+    function checkBoostDateWarning() {
+      const temDataDefinida = document.getElementById('temDataDefinida').value;
+      const avisoImpulsionamento4dias = document.getElementById('avisoImpulsionamento4dias');
+      
+      if (temDataDefinida === 'Sim') {
+        // Check if any date is within 4 days
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        // Check single dates
+        const datas = document.querySelectorAll('input[name="datas[]"]');
+        let showWarning = false;
+        
+        datas.forEach(dateInput => {
+          if (dateInput.value) {
+            const selectedDate = new Date(dateInput.value);
+            const diffTime = selectedDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 4) {
+              showWarning = true;
+            }
+          }
+        });
+        
+        // Check date ranges
+        const intervalos = document.querySelectorAll('.campo-intervalo');
+        intervalos.forEach(intervalo => {
+          const inicio = new Date(intervalo.querySelector('input[name="dataInicio[]"]').value);
+          const fim = new Date(intervalo.querySelector('input[name="dataFim[]"]').value);
+          
+          if (inicio) {
+            const diffTime = inicio - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 4) {
+              showWarning = true;
+            }
+          }
+        });
+        
+        if (showWarning) {
+          avisoImpulsionamento4dias.classList.remove('hidden');
+        } else {
+          avisoImpulsionamento4dias.classList.add('hidden');
+        }
+      } else {
+        avisoImpulsionamento4dias.classList.add('hidden');
+      }
+    }
+
+    function voltarSessao(sessao) {
+      document.getElementById('sessao1').classList.remove('active');
+      document.getElementById('sessao2').classList.remove('active');
+      
+      if (sessao === 1) {
+        document.getElementById('sessao1').classList.add('active');
+      }
+    }
+
+    // Save as PDF
+    function salvarPDF() {
+      const element = document.getElementById('vagaForm');
+      const opt = {
+        margin: 10,
+        filename: 'formulario_vaga.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      // Show loading state
+      const saveBtn = document.querySelector('button[onclick="salvarPDF()"]');
+      const originalText = saveBtn.innerHTML;
+      saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Gerando PDF...';
+      saveBtn.disabled = true;
+
+      // Generate PDF
+      html2pdf().set(opt).from(element).save().then(() => {
+        // Restore button state
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
+        
+        // Show success message
+        const successMsg = document.createElement('div');
+        successMsg.className = 'bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded animate-pulse';
+        successMsg.innerHTML = `
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <i class="fas fa-check-circle text-green-500 text-xl mr-3 mt-1"></i>
+            </div>
+            <div>
+              <p class="font-bold text-green-800">Formulário salvo com sucesso!</p>
+              <p class="text-green-700 mt-1">O arquivo PDF foi baixado para o seu dispositivo.</p>
+            </div>
+          </div>
+        `;
+        element.parentNode.insertBefore(successMsg, element.nextSibling);
+        
+        // Remove message after 5 seconds
+        setTimeout(() => {
+          successMsg.remove();
+        }, 5000);
+      });
+    }
+
+    // Neighborhood search
+    document.getElementById('bairroSearch').addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const options = document.querySelectorAll('select[name="bairros"] option');
+      
+      options.forEach(option => {
+        const text = option.textContent.toLowerCase();
+        if (text.includes(searchTerm) || searchTerm === '') {
+          option.style.display = '';
+        } else {
+          option.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
 </html>
