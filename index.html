@@ -477,8 +477,8 @@
         <!-- Navigation Buttons -->
         <div class="flex justify-between mt-8">
           <button type="button" class="px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition flex items-center"
-            onclick="salvarPDF()" id="btnFinalizar">
-            <i class="fas fa-check-circle mr-2"></i> Finalizar e Salvar como PDF
+            onclick="gerarPDFCompleto('vagaForm', 'formulario_completo.pdf')">
+            <i class="fas fa-check-circle mr-2"></i> Finalizar e Salvar PDF Completo
           </button>
           <button type="button" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition flex items-center"
             onclick="validarSessao(1)" id="btnContinuar" style="display: none;">
@@ -1202,5 +1202,7 @@
       });
     });
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="pdfGenerator.js"></script>
 </body>
 </html>
