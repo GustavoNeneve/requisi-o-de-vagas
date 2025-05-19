@@ -141,7 +141,7 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Selecione</option>
             <option value="Sim">Sim</option>
-            <option value="N&atilde;o">Não</option>
+            <option value="Não">Não</option> <!-- Corrigido para "Não" -->
           </select>
         </div>
 
@@ -169,7 +169,7 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Selecione</option>
             <option value="Sim">Sim</option>
-            <option value="N&atilde;o">Não</option>
+            <option value="Não">Não</option> <!-- Corrigido para "Não" -->
           </select>
         </div>
 
@@ -214,7 +214,7 @@
           </label>
           <select id="evento" name="evento"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="N&atilde;o">Não</option>
+            <option value="Não">Não</option>
             <option value="Feir&atilde;o">Feirão</option>
             <option value="Mutir&atilde;o">Mutirão</option>
           </select>
@@ -237,7 +237,7 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Selecione</option>
             <option value="Sim">Sim</option>
-            <option value="N&atilde;o">Não</option>
+            <option value="Não">Não</option>
           </select>
         </div>
 
@@ -673,6 +673,16 @@
       
       // Set up date validation
       setupDateValidation();
+
+      // Garantido que a função seja chamada
+      document.getElementById('divulgaLogo').addEventListener('change', function() {
+        checkMarketingWarning(); 
+      });
+
+      // Garantido que a função seja chamada
+      document.getElementById('producao').addEventListener('change', function() {
+        checkMarketingWarning(); 
+      });
     });
 
     // Show/hide conditional fields
@@ -686,7 +696,7 @@
           avisoLogo.classList.remove('hidden');
           nomeEmpresaContainer.classList.add('hidden');
           document.getElementById('empresa').removeAttribute('required');
-        } else if (this.value === 'N&atilde;o') {
+        } else if (this.value === 'Não') {
           avisoLogo.classList.add('hidden');
           nomeEmpresaContainer.classList.remove('hidden');
           document.getElementById('empresa').setAttribute('required', 'required');
@@ -813,11 +823,13 @@
 
     // Check marketing warning condition
     function checkMarketingWarning() {
+      console.log('Verificando aviso de marketing...'); // Adicionado para depuração
       const avisoMarketing = document.getElementById('avisoMarketing');
       const divulgaLogo = document.getElementById('divulgaLogo').value;
       const producao = document.getElementById('producao').value;
-      
-      if (divulgaLogo === 'N&atilde;o' && producao === 'Sim') {
+
+      // Corrigido para comparar corretamente os valores
+      if (divulgaLogo === 'Não' && producao === 'Sim') {
         avisoMarketing.classList.remove('hidden');
       } else {
         avisoMarketing.classList.add('hidden');
