@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Formulário de Vaga</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
+    /* Estilos Gerais */
     .remove-btn {
       color: #ef4444;
       cursor: pointer;
@@ -44,11 +45,17 @@
       font-style: italic;
       font-size: 0.875rem;
     }
+    .valid {
+      border-color: #22c55e;
+    }
+    .invalid {
+      border-color: #ef4444;
+    }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
   <div class="container mx-auto px-4 py-8 max-w-4xl">
-    <!-- Header with important notices -->
+    <!-- Cabeçalho com avisos importantes -->
     <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded">
       <div class="flex items-start">
         <div class="flex-shrink-0">
@@ -61,21 +68,21 @@
       </div>
     </div>
 
-    <!-- Progress tracker -->
+    <!-- Indicador de Progresso -->
     <div class="flex mb-8 overflow-x-auto">
       <div class="flex space-x-4">
-        <div class="flex items-center">
+        <div id="step1" class="flex items-center">
           <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">1</div>
           <div class="ml-2 text-sm font-medium text-gray-700">Dados Básicos</div>
         </div>
-        <div class="flex items-center">
-          <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">2</div>
+        <div id="step2" class="flex items-center">
+          <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold">2</div>
           <div class="ml-2 text-sm font-medium text-gray-700">Impulsionamento</div>
         </div>
       </div>
     </div>
 
-    <!-- Tip box -->
+    <!-- Caixa de Dicas -->
     <div class="bg-blue-100 border-l-4 border-blue-500 p-4 mb-6 rounded">
       <div class="flex items-start">
         <div class="flex-shrink-0">
@@ -88,13 +95,12 @@
     </div>
 
     <form id="vagaForm" class="bg-white shadow-md rounded-lg p-6">
-      <!-- Section 1 - Job Data -->
+      <!-- Seção 1 - Dados da Vaga -->
       <section id="sessao1" class="form-section active">
         <h2 class="text-2xl font-bold text-blue-700 border-b border-blue-200 pb-3 mb-6 flex items-center">
           <i class="fas fa-file-alt mr-2"></i> Sessão 1 - Dados da Vaga
         </h2>
 
-        <!-- Analyst Info -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="analista">
             Nome do analista <span class="text-red-500">*</span>
@@ -106,7 +112,6 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
-        <!-- WhatsApp -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="whatsapp">
             WhatsApp <span class="text-red-500">*</span>
@@ -118,7 +123,21 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
-        <!-- Logo Disclosure -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2" for="divulgaLogo">
+            Pode divulgar a logo? <span class="text-red-500">*</span>
+            <span class="text-blue-500 cursor-help ml-1" title="Selecione se a logo da empresa pode ser divulgada">
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <select id="divulgaLogo" name="divulgaLogo" required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Selecione</option>
+            <option value="Sim">Sim</option>
+            <option value="Não">Não</option>
+          </select>
+        </div>
+        
         <div id="avisoLogo" class="hidden bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4 rounded">
           <div class="flex items-start">
             <div class="flex-shrink-0">
@@ -130,22 +149,6 @@
           </div>
         </div>
 
-        <div class="mb-4">
-          <label class="block text-gray-700 font-medium mb-2" for="divulgaLogo">
-            Pode divulgar a logo? <span class="text-red-500">*</span>
-            <span class="text-blue-500 cursor-help ml-1" title="Selecione se a logo da empresa pode ser divulgada">
-              <i class="fas fa-info-circle"></i>
-            </span>
-          </label>
-          <select id="divulgaLogo" required
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Selecione</option>
-            <option value="Sim">Sim</option>
-            <option value="Não">Não</option> <!-- Corrigido para "Não" -->
-          </select>
-        </div>
-
-        <!-- Company Name (conditional) -->
         <div id="nomeEmpresaContainer" class="hidden mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="empresa">
             Nome da empresa <span class="text-red-500">*</span>
@@ -157,7 +160,6 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
-        <!-- Production Job -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="producao">
             É produção? <span class="text-red-500">*</span>
@@ -165,15 +167,14 @@
               <i class="fas fa-info-circle"></i>
             </span>
           </label>
-          <select id="producao" required
+          <select id="producao" name="producao" required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Selecione</option>
             <option value="Sim">Sim</option>
-            <option value="Não">Não</option> <!-- Corrigido para "Não" -->
+            <option value="Não">Não</option>
           </select>
         </div>
 
-        <!-- Marketing Warning (conditional) -->
         <div id="avisoMarketing" class="hidden bg-red-50 border-l-4 border-red-400 p-4 mb-4 rounded">
           <div class="flex items-start">
             <div class="flex-shrink-0">
@@ -185,12 +186,11 @@
           </div>
         </div>
 
-        <!-- In-person Attendance -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="presencial">
             Comparecimento presencial? <span class="text-red-500">*</span>
           </label>
-          <select id="presencial" required
+          <select id="presencial" name="presencial" required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Selecione</option>
             <option value="RHBrasil">RHBrasil</option>
@@ -198,16 +198,14 @@
           </select>
         </div>
 
-        <!-- Other Location (conditional) -->
         <div id="outroLugar" class="hidden mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="local">
             Local para comparecer (Google Maps link) <span class="text-red-500">*</span>
           </label>
-          <input id="local" name="local" type="url" placeholder="https://goo.gl/maps/xyz123"
+          <input id="local" name="local" type="url" placeholder="https://maps.app.goo.gl/xyz123"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
-        <!-- Event Type (conditional) -->
         <div id="eventoContainer" class="hidden mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="evento">
             É evento/feirão/mutirão?
@@ -215,12 +213,11 @@
           <select id="evento" name="evento"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="Não">Não</option>
-            <option value="Feir&atilde;o">Feirão</option>
-            <option value="Mutir&atilde;o">Mutirão</option>
+            <option value="Feirão">Feirão</option>
+            <option value="Mutirão">Mutirão</option>
           </select>
         </div>
 
-        <!-- Job Title -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="cargo">
             Nome do cargo <span class="text-red-500">*</span>
@@ -228,12 +225,12 @@
           <input id="cargo" name="cargo" type="text" required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
-        <!-- Vaga Recorrente -->
+        
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="recorrente">
             É uma vaga recorrente? <span class="text-red-500">*</span>
           </label>
-          <select id="recorrente" required
+          <select id="recorrente" name="recorrente" required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Selecione</option>
             <option value="Sim">Sim</option>
@@ -241,7 +238,6 @@
           </select>
         </div>
 
-        <!-- Média Mensal (condicional) -->
         <div id="mediaMensalContainer" class="hidden mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="mediaMensal">
             Qual a média mensal? <span class="text-red-500">*</span>
@@ -250,7 +246,6 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
-        <!-- Tipo de Vaga -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="tipoVaga">
             Tipo de vaga <span class="text-red-500">*</span>
@@ -263,16 +258,14 @@
           </select>
         </div>
 
-        <!-- Defined Date -->
         <div class="mb-4">
-        
           <label class="block text-gray-700 font-medium mb-2" for="temDataDefinida">
             Tem data definida? <span class="text-red-500">*</span>
             <span class="text-blue-500 cursor-help ml-1" title="Se não tiver data definida, o padrão será de Segunda à Sexta">
               <i class="fas fa-info-circle"></i>
             </span>
           </label>
-          <select id="temDataDefinida" required
+          <select id="temDataDefinida" name="temDataDefinida" required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Selecione</option>
             <option value="Sim">Sim</option>
@@ -280,7 +273,6 @@
           </select>
         </div>
 
-        <!-- Date Selection (conditional) -->
         <div id="datasContainer" class="hidden mb-4">
           <div class="tipo-container flex space-x-4 mb-4">
             <label class="inline-flex items-center">
@@ -293,12 +285,11 @@
             </label>
           </div>
 
-          <!-- Single Date -->
           <div id="dataUnica">
             <div id="datasUnicas">
               <div class="campo-data flex items-center mb-2">
                 <label class="mr-2">Data:</label>
-                <input type="date" name="datas[]" required
+                <input type="date" name="datas[]"
                   class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <span class="remove-btn ml-2" onclick="removerData(this)"><i class="fas fa-times"></i></span>
               </div>
@@ -309,16 +300,17 @@
             </button>
           </div>
 
-          <!-- Date Range -->
           <div id="dataIntervalo" class="hidden">
-            <div class="campo-intervalo grid grid-cols-5 gap-2 items-center mb-2">
-              <label>De</label>
-              <input type="date" name="dataInicio[]" required
-                class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <label>até</label>
-              <input type="date" name="dataFim[]" required
-                class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <span class="remove-btn ml-2" onclick="removerIntervalo(this)"><i class="fas fa-times"></i></span>
+             <div id="datasIntervalos">
+                <div class="campo-intervalo grid grid-cols-5 gap-2 items-center mb-2">
+                  <label>De</label>
+                  <input type="date" name="dataInicio[]"
+                    class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <label>até</label>
+                  <input type="date" name="dataFim[]"
+                    class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <span class="remove-btn ml-2" onclick="removerIntervalo(this)"><i class="fas fa-times"></i></span>
+                </div>
             </div>
             <button type="button" onclick="adicionarIntervalo()"
               class="mt-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition">
@@ -327,7 +319,6 @@
           </div>
         </div>
 
-        <!-- Defined Time -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="temHorarioDefinido">
             Tem horário definido? <span class="text-red-500">*</span>
@@ -335,7 +326,7 @@
               <i class="fas fa-info-circle"></i>
             </span>
           </label>
-          <select id="temHorarioDefinido" required
+          <select id="temHorarioDefinido" name="temHorarioDefinido" required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Selecione</option>
             <option value="Sim">Sim</option>
@@ -343,7 +334,6 @@
           </select>
         </div>
 
-        <!-- Time Selection (conditional) -->
         <div id="horariosContainer" class="hidden mb-4">
           <div class="tipo-container flex space-x-4 mb-4">
             <label class="inline-flex items-center">
@@ -356,13 +346,14 @@
             </label>
           </div>
 
-          <!-- Single Time -->
           <div id="horarioUnico">
-            <div class="campo-horario flex items-center mb-2">
-              <label class="mr-2">Horário:</label>
-              <input type="time" name="horarios[]" required
-                class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <span class="remove-btn ml-2" onclick="removerHorario(this)"><i class="fas fa-times"></i></span>
+            <div id="horariosUnicos">
+              <div class="campo-horario flex items-center mb-2">
+                <label class="mr-2">Horário:</label>
+                <input type="time" name="horarios[]"
+                  class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <span class="remove-btn ml-2" onclick="removerHorario(this)"><i class="fas fa-times"></i></span>
+              </div>
             </div>
             <button type="button" onclick="adicionarHorario()"
               class="mt-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition">
@@ -370,20 +361,25 @@
             </button>
           </div>
 
-          <!-- Time Range -->
           <div id="horarioIntervalo" class="hidden">
-            <div class="campo-intervalo grid grid-cols-5 gap-2 items-center mb-2">
-              <label>Das</label>
-              <input type="time" name="horaInicio" required
-                class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <label>às</label>
-              <input type="time" name="horaFim" required
-                class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <div id="horariosIntervalos">
+                <div class="campo-intervalo-horario grid grid-cols-5 gap-2 items-center mb-2">
+                  <label>Das</label>
+                  <input type="time" name="horaInicio[]"
+                    class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <label>às</label>
+                  <input type="time" name="horaFim[]"
+                    class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <span class="remove-btn ml-2" onclick="removerHorarioIntervalo(this)"><i class="fas fa-times"></i></span>
+                </div>
             </div>
+             <button type="button" onclick="adicionarHorarioIntervalo()"
+              class="mt-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition">
+              <i class="fas fa-plus mr-1"></i> Adicionar intervalo de horário
+            </button>
           </div>
         </div>
 
-        <!-- Number of Positions -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="vagas">
             Quantas vagas <span class="text-red-500">*</span>
@@ -392,7 +388,6 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
-        <!-- Benefits -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="beneficios">
             Benefícios <span class="optional">(Opcional)</span>
@@ -401,7 +396,6 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
         </div>
 
-        <!-- Requirements -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="requisitos">
             Requisitos <span class="optional">(Opcional)</span>
@@ -410,7 +404,6 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
         </div>
 
-        <!-- Turnos -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="turnos">
             Turnos <span class="optional">(Opcional)</span>
@@ -419,29 +412,26 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
-        <!-- Joinville -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="joinville">
             É para Joinville? <span class="text-red-500">*</span>
           </label>
-          <select id="joinville" required
+          <select id="joinville" name="joinville" required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Selecione</option>
             <option value="Sim">Sim</option>
-            <option value="N&atilde;o">Não</option>
+            <option value="Não">Não</option>
           </select>
         </div>
 
-        <!-- Other City (conditional) -->
         <div id="cidadeOutras" class="hidden mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="outraCidade">
             Qual cidade? <span class="text-red-500">*</span>
           </label>
-          <input id="outraCidade" name="outraCidade" type="text" required
+          <input id="outraCidade" name="outraCidade" type="text"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
-        <!-- Additional Notes -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="notas">
             Notas adicionais (algo que só você sabe e ajuda muito?) <span class="optional">(Opcional)</span>
@@ -450,19 +440,17 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
         </div>
 
-        <!-- Boost -->
         <div class="mb-6">
           <label class="block text-gray-700 font-medium mb-2" for="impulsionar">
             É para impulsionar? <span class="text-red-500">*</span>
           </label>
-          <select id="impulsionar" required
+          <select id="impulsionar" name="impulsionar" required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="Não">Não</option>
             <option value="Sim">Sim</option>
           </select>
         </div>
 
-        <!-- Boost Warning (conditional) -->
         <div id="avisoImpulsionamento" class="hidden bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded">
           <div class="flex items-start">
             <div class="flex-shrink-0">
@@ -474,27 +462,23 @@
           </div>
         </div>
 
-        <!-- Navigation Buttons -->
         <div class="flex justify-between mt-8">
-          <button type="button" class="px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition flex items-center"
-            onclick="gerarPDFCompleto('vagaForm', 'formulario_completo.pdf')">
-            <i class="fas fa-check-circle mr-2"></i> Finalizar e Salvar PDF Completo
+          <button id="btnFinalizarPDF" type="button" class="px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition flex items-center">
+            <i class="fas fa-paper-plane mr-2"></i> Finalizar e Enviar por E-mail
           </button>
-          <button type="button" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition flex items-center"
-            onclick="validarSessao(1)" id="btnContinuar" style="display: none;">
+          <button id="btnContinuar" type="button" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition flex items-center" style="display: none;">
             Continuar para Impulsionamento <i class="fas fa-arrow-right ml-2"></i>
           </button>
         </div>
       </section>
 
-      <!-- Section 2 - Boost -->
+      <!-- Seção 2 - Impulsionamento -->
       <section id="sessao2" class="form-section">
         <h2 class="text-2xl font-bold text-blue-700 border-b border-blue-200 pb-3 mb-6 flex items-center">
           <i class="fas fa-rocket mr-2"></i> Sessão 2 - Impulsionamento
         </h2>
 
-        <!-- Boost Warning -->
-        <div id="avisoImpulsionamento4dias" class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded">
+        <div id="avisoImpulsionamento4dias" class="hidden bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded">
           <div class="flex items-start">
             <div class="flex-shrink-0">
               <i class="fas fa-exclamation-triangle text-yellow-500 text-xl mr-3 mt-1"></i>
@@ -505,7 +489,6 @@
           </div>
         </div>
 
-        <!-- Gender -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="genero">
             Gênero <span class="text-red-500">*</span>
@@ -518,7 +501,6 @@
           </select>
         </div>
 
-        <!-- Age Range -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label class="block text-gray-700 font-medium mb-2" for="idadeMinima">
@@ -536,7 +518,6 @@
           </div>
         </div>
 
-        <!-- Boost Days -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="dias">
             Quantos dias de impulsionamento? <span class="text-red-500">*</span>
@@ -545,7 +526,6 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
-        <!-- Daily Budget -->
         <div class="mb-4">
           <label class="block text-gray-700 font-medium mb-2" for="orcamento">
             Qual orçamento sugerido por dia? <span class="text-red-500">*</span>
@@ -554,7 +534,6 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
-        <!-- Neighborhoods -->
         <div id="bairrosJoinvilleContainer" class="mb-6">
           <label class="block text-gray-700 font-medium mb-2" for="bairros">
             Quais bairros? <span class="text-red-500">*</span>
@@ -566,8 +545,8 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div class="bairros-list p-2">
-              <select multiple="multiple" name="bairros" required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <select multiple="multiple" id="bairros" name="bairros" required
+                class="w-full h-40 px-3 py-2 border-none">
                 <option value="toda">Toda Joinville</option>
                 <optgroup label="CentroNorte">
                   <option value="Centro">Centro</option>
@@ -591,9 +570,9 @@
                   <option value="Boa Vista">Boa Vista</option>
                   <option value="Comasa">Comasa</option>
                   <option value="Espinheiros">Espinheiros</option>
-                  <option value="Iriri&uacute;">Iririú</option>
-                  <option value="Jardim Iriri&uacute;">Jardim Iririú</option>
-                  <option value="Vila Cubat&atilde;o">Vila Cubatão</option>
+                  <option value="Iririú">Iririú</option>
+                  <option value="Jardim Iririú">Jardim Iririú</option>
+                  <option value="Vila Cubatão">Vila Cubatão</option>
                   <option value="Zona Industrial Tupy">Zona Industrial Tupy</option>
                 </optgroup>
                 <optgroup label="Zona Sul">
@@ -601,23 +580,23 @@
                   <option value="Anita Garibaldi">Anita Garibaldi</option>
                   <option value="Boehmerwald">Boehmerwald</option>
                   <option value="Bucarein">Bucarein</option>
-                  <option value="F&aacute;tima">Fátima</option>
+                  <option value="Fátima">Fátima</option>
                   <option value="Floresta">Floresta</option>
                   <option value="Guanabara">Guanabara</option>
                   <option value="Itaum">Itaum</option>
                   <option value="Itinga">Itinga</option>
                   <option value="Jarivatuba">Jarivatuba</option>
-                  <option value="Jo&atilde;o Costa">João Costa</option>
+                  <option value="João Costa">João Costa</option>
                   <option value="Paranaguamirim">Paranaguamirim</option>
                   <option value="Parque Guarani">Parque Guarani</option>
-                  <option value="Petr&oacute;polis">Petrópolis</option>
+                  <option value="Petrópolis">Petrópolis</option>
                   <option value="Profipo">Profipo</option>
                 </optgroup>
                 <optgroup label="Zona Oeste">
                   <option value="Morro do Meio">Morro do Meio</option>
-                  <option value="Nova Bras&iacute;lia">Nova Brasília</option>
-                  <option value="S&atilde;o Marcos">São Marcos</option>
-                  <option value="Ulysses Guimar&atilde;es">Ulysses Guimarães</option>
+                  <option value="Nova Brasília">Nova Brasília</option>
+                  <option value="São Marcos">São Marcos</option>
+                  <option value="Ulysses Guimarães">Ulysses Guimarães</option>
                   <option value="Vila Nova">Vila Nova</option>
                 </optgroup>
               </select>
@@ -625,7 +604,6 @@
           </div>
         </div>
 
-        <!-- Other Neighborhoods -->
         <div id="outrosBairrosContainer" class="hidden mb-6">
           <label class="block text-gray-700 font-medium mb-2" for="outrosBairros">
             Quais bairros? <span class="text-red-500">*</span>
@@ -634,575 +612,574 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
-        <!-- Navigation Buttons -->
         <div class="flex justify-between mt-8">
-          <button type="button" class="px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 transition flex items-center"
-            onclick="voltarSessao(1)">
+          <button type="button" class="px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 transition flex items-center" onclick="voltarSessao(1)">
             <i class="fas fa-arrow-left mr-2"></i> Voltar
           </button>
-          <button type="button" class="px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition flex items-center"
-            onclick="salvarPDF()">
-            <i class="fas fa-check-circle mr-2"></i> Finalizar e Salvar como PDF
+          <button type="button" class="px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition flex items-center" id="btnSalvarPDF">
+            <i class="fas fa-paper-plane mr-2"></i> Finalizar e Enviar por E-mail
           </button>
         </div>
       </section>
 
-      <!-- Error Messages -->
-      <div id="errorMessages" class="hidden bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
-        <div class="flex items-start">
-          <div class="flex-shrink-0">
-            <i class="fas fa-exclamation-circle text-red-500 text-xl mr-3 mt-1"></i>
-          </div>
-          <div>
-            <p class="font-bold text-red-800">Por favor, corrija os seguintes erros:</p>
-            <ul id="errorList" class="list-disc pl-5 mt-2 text-red-700"></ul>
-          </div>
-        </div>
-      </div>
     </form>
   </div>
 
-  <script>
-    // Initialize form on load
-    document.addEventListener('DOMContentLoaded', function() {
-      // Set up all conditional fields
-      setupConditionalFields();
-      
-      // Set up validation for age fields
-      setupAgeValidation();
-      
-      // Set up date validation
-      setupDateValidation();
+<script>
+document.addEventListener('DOMContentLoaded', () => {
 
-      // Garantido que a função seja chamada
-      document.getElementById('divulgaLogo').addEventListener('change', function() {
-        checkMarketingWarning(); 
-      });
-
-      // Garantido que a função seja chamada
-      document.getElementById('producao').addEventListener('change', function() {
-        checkMarketingWarning(); 
-      });
-    });
-
-    // Show/hide conditional fields
-    function setupConditionalFields() {
-      // Logo disclosure
-      document.getElementById('divulgaLogo').addEventListener('change', function() {
-        const avisoLogo = document.getElementById('avisoLogo');
-        const nomeEmpresaContainer = document.getElementById('nomeEmpresaContainer');
+    const elementos = {
+        form: document.getElementById("vagaForm"),
+        // Sessão 1
+        analista: document.getElementById("analista"),
+        whatsapp: document.getElementById("whatsapp"),
+        divulgaLogo: document.getElementById("divulgaLogo"),
+        avisoLogo: document.getElementById("avisoLogo"),
+        nomeEmpresaContainer: document.getElementById("nomeEmpresaContainer"),
+        empresa: document.getElementById("empresa"),
+        producao: document.getElementById("producao"),
+        avisoMarketing: document.getElementById("avisoMarketing"),
+        presencial: document.getElementById("presencial"),
+        outroLugar: document.getElementById("outroLugar"),
+        local: document.getElementById("local"),
+        eventoContainer: document.getElementById("eventoContainer"),
+        cargo: document.getElementById("cargo"),
+        recorrente: document.getElementById("recorrente"),
+        mediaMensalContainer: document.getElementById("mediaMensalContainer"),
+        mediaMensal: document.getElementById("mediaMensal"),
+        tipoVaga: document.getElementById("tipoVaga"),
+        temDataDefinida: document.getElementById("temDataDefinida"),
+        datasContainer: document.getElementById("datasContainer"),
+        dataUnica: document.getElementById("dataUnica"),
+        datasUnicas: document.getElementById("datasUnicas"),
+        dataIntervalo: document.getElementById("dataIntervalo"),
+        datasIntervalos: document.getElementById("datasIntervalos"),
+        temHorarioDefinido: document.getElementById("temHorarioDefinido"),
+        horariosContainer: document.getElementById("horariosContainer"),
+        horarioUnico: document.getElementById("horarioUnico"),
+        horariosUnicos: document.getElementById("horariosUnicos"),
+        horarioIntervalo: document.getElementById("horarioIntervalo"),
+        horariosIntervalos: document.getElementById("horariosIntervalos"),
+        vagas: document.getElementById("vagas"),
+        joinville: document.getElementById("joinville"),
+        cidadeOutras: document.getElementById("cidadeOutras"),
+        outraCidade: document.getElementById("outraCidade"),
+        impulsionar: document.getElementById("impulsionar"),
+        avisoImpulsionamento: document.getElementById("avisoImpulsionamento"),
+        btnFinalizarPDF: document.getElementById("btnFinalizarPDF"),
+        btnContinuar: document.getElementById("btnContinuar"),
         
-        if (this.value === 'Sim') {
-          avisoLogo.classList.remove('hidden');
-          nomeEmpresaContainer.classList.add('hidden');
-          document.getElementById('empresa').removeAttribute('required');
-        } else if (this.value === 'Não') {
-          avisoLogo.classList.add('hidden');
-          nomeEmpresaContainer.classList.remove('hidden');
-          document.getElementById('empresa').setAttribute('required', 'required');
-        } else {
-          avisoLogo.classList.add('hidden');
-          nomeEmpresaContainer.classList.add('hidden');
-          document.getElementById('empresa').removeAttribute('required');
+        // Sessão 2
+        sessao1: document.getElementById("sessao1"),
+        sessao2: document.getElementById("sessao2"),
+        avisoImpulsionamento4dias: document.getElementById("avisoImpulsionamento4dias"),
+        genero: document.getElementById("genero"),
+        idadeMinima: document.getElementById("idadeMinima"),
+        idadeMaxima: document.getElementById("idadeMaxima"),
+        dias: document.getElementById("dias"),
+        orcamento: document.getElementById("orcamento"),
+        bairrosJoinvilleContainer: document.getElementById("bairrosJoinvilleContainer"),
+        bairroSearch: document.getElementById("bairroSearch"),
+        bairros: document.getElementById("bairros"),
+        outrosBairrosContainer: document.getElementById("outrosBairrosContainer"),
+        outrosBairros: document.getElementById("outrosBairros"),
+        btnSalvarPDF: document.getElementById("btnSalvarPDF"),
+
+        // Indicador de Progresso
+        step1: document.getElementById('step1').querySelector('div'),
+        step2: document.getElementById('step2').querySelector('div'),
+    };
+
+    const mascaras = {
+        aplicarMascaraTelefone(event) {
+            let value = event.target.value.replace(/\D/g, "");
+            value = value.substring(0, 11);
+            if (value.length > 10) {
+                value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+            } else if (value.length > 5) {
+                value = value.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+            } else if (value.length > 2) {
+                value = value.replace(/^(\d{2})(\d*)/, "($1) $2");
+            } else {
+                value = value.replace(/^(\d*)/, "($1");
+            }
+            event.target.value = value;
+        },
+        aplicarMascaraValor(event) {
+            let value = event.target.value.replace(/\D/g, "");
+            if (value === "") {
+                event.target.value = "";
+                return;
+            }
+            value = (parseInt(value, 10) / 100).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            event.target.value = value;
         }
-        
-        // Check marketing warning
-        checkMarketingWarning();
-      });
+    };
 
-      // Production job
-      document.getElementById('producao').addEventListener('change', function() {
-        checkMarketingWarning();
-      });
+    const validacao = {
+        validarSessao(numSessao) {
+            const sessao = document.getElementById(`sessao${numSessao}`);
+            sessao.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+            
+            const inputs = sessao.querySelectorAll('input[required], select[required], textarea[required]');
+            const errors = [];
 
-      // In-person attendance
-      document.getElementById('presencial').addEventListener('change', function() {
-        const outroLugar = document.getElementById('outroLugar');
-        const eventoContainer = document.getElementById('eventoContainer');
-        
-        if (this.value === 'Outro') {
-          outroLugar.classList.remove('hidden');
-          eventoContainer.classList.remove('hidden');
-          document.getElementById('local').setAttribute('required', 'required');
-        } else {
-          outroLugar.classList.add('hidden');
-          eventoContainer.classList.add('hidden');
-          document.getElementById('local').removeAttribute('required');
+            const getLabelText = (input) => {
+                const label = sessao.querySelector(`label[for="${input.id}"]`);
+                if (label) {
+                    const clone = label.cloneNode(true);
+                    clone.querySelectorAll('span').forEach(s => s.remove());
+                    return clone.textContent.trim();
+                }
+                return input.name || input.id || 'Campo desconhecido';
+            };
+
+            inputs.forEach(input => {
+                if (input.offsetParent !== null) { 
+                    if (!input.value.trim()) {
+                        errors.push(`O campo "<b>${getLabelText(input)}</b>" é obrigatório.`);
+                        input.classList.add('invalid');
+                    }
+                }
+            });
+
+            if (numSessao === 1) {
+                if (elementos.temDataDefinida.value === 'Sim' && elementos.datasContainer.offsetParent !== null) {
+                    const tipoData = document.querySelector('input[name="tipoData"]:checked').value;
+                    if (tipoData === 'unico') {
+                        const datasInputs = elementos.datasUnicas.querySelectorAll('input[name="datas[]"]');
+                        if ([...datasInputs].every(d => !d.value)) {
+                            errors.push("Adicione pelo menos uma <b>data</b>.");
+                            datasInputs.forEach(d => d.classList.add('invalid'));
+                        }
+                    } else { 
+                        const intervalosInputs = elementos.datasIntervalos.querySelectorAll('.campo-intervalo');
+                        if ([...intervalosInputs].some(i => !i.querySelector('input[name="dataInicio[]"]').value || !i.querySelector('input[name="dataFim[]"]').value)) {
+                            errors.push("Preencha todos os campos de <b>intervalo de datas</b>.");
+                             intervalosInputs.forEach(i => {
+                                 if(!i.querySelector('input[name="dataInicio[]"]').value) i.querySelector('input[name="dataInicio[]"]').classList.add('invalid')
+                                 if(!i.querySelector('input[name="dataFim[]"]').value) i.querySelector('input[name="dataFim[]"]').classList.add('invalid')
+                             });
+                        }
+                    }
+                }
+                 if (elementos.temHorarioDefinido.value === 'Sim' && elementos.horariosContainer.offsetParent !== null) {
+                    const tipoHorario = document.querySelector('input[name="tipoHorario"]:checked').value;
+                    if (tipoHorario === 'unico') {
+                         const horariosInputs = elementos.horariosUnicos.querySelectorAll('input[name="horarios[]"]');
+                        if ([...horariosInputs].every(h => !h.value)) {
+                            errors.push("Adicione pelo menos um <b>horário</b>.");
+                            horariosInputs.forEach(h => h.classList.add('invalid'));
+                        }
+                    } else { 
+                        const horariosIntervalosInputs = elementos.horariosIntervalos.querySelectorAll('.campo-intervalo-horario');
+                        if ([...horariosIntervalosInputs].some(i => !i.querySelector('input[name="horaInicio[]"]').value || !i.querySelector('input[name="horaFim[]"]').value)) {
+                            errors.push("Preencha todos os campos de <b>intervalo de horários</b>.");
+                             horariosIntervalosInputs.forEach(i => {
+                                 if(!i.querySelector('input[name="horaInicio[]"]').value) i.querySelector('input[name="horaInicio[]"]').classList.add('invalid')
+                                 if(!i.querySelector('input[name="horaFim[]"]').value) i.querySelector('input[name="horaFim[]"]').classList.add('invalid')
+                             });
+                        }
+                    }
+                }
+            }
+            
+            if (errors.length > 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Campos Obrigatórios',
+                    html: `<div class="text-left">Por favor, preencha os seguintes campos:<br><ul class="list-disc list-inside mt-2">${errors.map(e => `<li>${e}</li>`).join('')}</ul></div>`,
+                });
+                const firstInvalid = sessao.querySelector('.invalid');
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalid.focus();
+                }
+                return false;
+            }
+
+            return true;
         }
-      });
+    };
 
-      // Defined date
-      document.getElementById('temDataDefinida').addEventListener('change', function() {
-        const datasContainer = document.getElementById('datasContainer');
-        if (this.value === 'Sim') {
-          datasContainer.classList.remove('hidden');
-        } else {
-          datasContainer.classList.add('hidden');
+    function updateProgress(step) {
+        if (step === 1) {
+            elementos.step1.classList.remove('bg-gray-300');
+            elementos.step1.classList.add('bg-green-500');
+            elementos.step2.classList.remove('bg-green-500');
+            elementos.step2.classList.add('bg-gray-300');
+        } else if (step === 2) {
+            elementos.step2.classList.remove('bg-gray-300');
+            elementos.step2.classList.add('bg-green-500');
         }
-      });
-
-      // Defined time
-      document.getElementById('temHorarioDefinido').addEventListener('change', function() {
-        const horariosContainer = document.getElementById('horariosContainer');
-        if (this.value === 'Sim') {
-          horariosContainer.classList.remove('hidden');
-        } else {
-          horariosContainer.classList.add('hidden');
-        }
-      });
-
-      // Joinville
-      document.getElementById('joinville').addEventListener('change', function() {
-        const cidadeOutras = document.getElementById('cidadeOutras');
-        const bairrosJoinvilleContainer = document.getElementById('bairrosJoinvilleContainer');
-        const outrosBairrosContainer = document.getElementById('outrosBairrosContainer');
-        
-        if (this.value === 'N&atilde;o') {
-          cidadeOutras.classList.remove('hidden');
-          bairrosJoinvilleContainer.classList.add('hidden');
-          outrosBairrosContainer.classList.remove('hidden');
-          document.getElementById('outraCidade').setAttribute('required', 'required');
-          document.getElementById('outrosBairros').setAttribute('required', 'required');
-          document.querySelector('select[name="bairros"]').removeAttribute('required');
-        } else {
-          cidadeOutras.classList.add('hidden');
-          bairrosJoinvilleContainer.classList.remove('hidden');
-          outrosBairrosContainer.classList.add('hidden');
-          document.getElementById('outraCidade').removeAttribute('required');
-          document.getElementById('outrosBairros').removeAttribute('required');
-          document.querySelector('select[name="bairros"]').setAttribute('required', 'required');
-        }
-      });
-
-      // Boost
-      document.getElementById('impulsionar').addEventListener('change', function() {
-        const avisoImpulsionamento = document.getElementById('avisoImpulsionamento');
-        const btnContinuar = document.getElementById('btnContinuar');
-        
-        if (this.value === 'Sim') {
-          avisoImpulsionamento.classList.remove('hidden');
-          btnContinuar.style.display = 'flex';
-        } else {
-          avisoImpulsionamento.classList.add('hidden');
-          btnContinuar.style.display = 'none';
-        }
-      });
-
-      // Toggle between date types
-      document.querySelectorAll('input[name="tipoData"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-          const dataUnica = document.getElementById('dataUnica');
-          const dataIntervalo = document.getElementById('dataIntervalo');
-          
-          if (this.value === 'unico') {
-            dataUnica.classList.remove('hidden');
-            dataIntervalo.classList.add('hidden');
-          } else {
-            dataUnica.classList.add('hidden');
-            dataIntervalo.classList.remove('hidden');
-          }
+    }
+    
+    function navigateTo(sessaoId) {
+        document.querySelectorAll('.form-section').forEach(section => {
+            section.classList.remove('active');
         });
-      });
-
-      // Toggle between time types
-      document.querySelectorAll('input[name="tipoHorario"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-          const horarioUnico = document.getElementById('horarioUnico');
-          const horarioIntervalo = document.getElementById('horarioIntervalo');
-          
-          if (this.value === 'unico') {
-            horarioUnico.classList.remove('hidden');
-            horarioIntervalo.classList.add('hidden');
-          } else {
-            horarioUnico.classList.add('hidden');
-            horarioIntervalo.classList.remove('hidden');
-          }
-        });
-      });
+        document.getElementById(sessaoId).classList.add('active');
+        const step = sessaoId === 'sessao1' ? 1 : 2;
+        updateProgress(step);
     }
 
-    // Check marketing warning condition
+    elementos.divulgaLogo.addEventListener('change', (e) => {
+        const showEmpresa = e.target.value === 'Sim';
+        elementos.avisoLogo.classList.toggle('hidden', !showEmpresa);
+        elementos.nomeEmpresaContainer.classList.toggle('hidden', !showEmpresa);
+        elementos.empresa.required = showEmpresa;
+        if (!showEmpresa) {
+            elementos.empresa.value = '';
+            elementos.empresa.classList.remove('invalid', 'valid');
+        }
+        checkMarketingWarning();
+    });
+
+    elementos.producao.addEventListener('change', checkMarketingWarning);
+
     function checkMarketingWarning() {
-      console.log('Verificando aviso de marketing...'); // Adicionado para depuração
-      const avisoMarketing = document.getElementById('avisoMarketing');
-      const divulgaLogo = document.getElementById('divulgaLogo').value;
-      const producao = document.getElementById('producao').value;
-
-      // Corrigido para comparar corretamente os valores
-      if (divulgaLogo === 'Não' && producao === 'Sim') {
-        avisoMarketing.classList.remove('hidden');
-      } else {
-        avisoMarketing.classList.add('hidden');
-      }
+        const divulga = elementos.divulgaLogo.value;
+        const prod = elementos.producao.value;
+        elementos.avisoMarketing.classList.toggle('hidden', !(divulga === 'Não' && prod === 'Sim'));
     }
 
-    // Set up age validation
-    function setupAgeValidation() {
-      const idadeMinima = document.getElementById('idadeMinima');
-      const idadeMaxima = document.getElementById('idadeMaxima');
-      
-      idadeMinima.addEventListener('change', function() {
-        if (parseInt(this.value) < 18) {
-          this.value = 18;
-        }
-        if (parseInt(this.value) > parseInt(idadeMaxima.value)) {
-          idadeMaxima.value = this.value;
-        }
-      });
-      
-      idadeMaxima.addEventListener('change', function() {
-        if (parseInt(this.value) < parseInt(idadeMinima.value)) {
-          this.value = idadeMinima.value;
-        }
-        if (parseInt(this.value) > 100) {
-          this.value = 100;
-        }
-      });
-    }
-
-    // Set up date validation
-    function setupDateValidation() {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      // Validate single dates
-      document.addEventListener('change', function(e) {
-        if (e.target && e.target.name === 'datas[]') {
-          const selectedDate = new Date(e.target.value);
-          if (selectedDate < today) {
-            alert('Não é possível selecionar datas passadas');
-            e.target.value = '';
-          }
-        }
-        
-        // Validate date ranges
-        if (e.target && (e.target.name === 'dataInicio[]' || e.target.name === 'dataFim[]')) {
-          const parent = e.target.closest('.campo-intervalo');
-          if (parent) {
-            const inicio = new Date(parent.querySelector('input[name="dataInicio[]"]').value);
-            const fim = new Date(parent.querySelector('input[name="dataFim[]"]').value);
-            
-            if (inicio && fim && inicio > fim) {
-              alert('A data de início não pode ser depois da data de fim');
-              e.target.value = '';
-            }
-            
-            if (inicio && inicio < today) {
-              alert('Não é possível selecionar datas passadas');
-              parent.querySelector('input[name="dataInicio[]"]').value = '';
-            }
-            
-            if (fim && fim < today) {
-              alert('Não é possível selecionar datas passadas');
-              parent.querySelector('input[name="dataFim[]"]').value = '';
-            }
-          }
-        }
-      });
-    }
-
-    // Add/remove date fields
-    function adicionarData() {
-      const container = document.getElementById('datasUnicas');
-      const newField = document.createElement('div');
-      newField.className = 'campo-data flex items-center mb-2';
-      newField.innerHTML = `
-        <label class="mr-2">Data:</label>
-        <input type="date" name="datas[]" required
-          class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <span class="remove-btn ml-2" onclick="removerData(this)"><i class="fas fa-times"></i></span>
-      `;
-      container.appendChild(newField);
-    }
-
-    function removerData(element) {
-      element.parentElement.remove();
-    }
-
-    // Add/remove date range fields
-    function adicionarIntervalo() {
-      const container = document.getElementById('dataIntervalo');
-      const newField = document.createElement('div');
-      newField.className = 'campo-intervalo grid grid-cols-5 gap-2 items-center mb-2';
-      newField.innerHTML = `
-        <label>De</label>
-        <input type="date" name="dataInicio[]" required
-          class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <label>até</label>
-        <input type="date" name="dataFim[]" required
-          class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <span class="remove-btn ml-2" onclick="removerIntervalo(this)"><i class="fas fa-times"></i></span>
-      `;
-      container.insertBefore(newField, container.lastElementChild);
-    }
-
-    function removerIntervalo(element) {
-      element.parentElement.remove();
-    }
-
-    // Add/remove time fields
-    function adicionarHorario() {
-      const container = document.getElementById('horarioUnico');
-      const newField = document.createElement('div');
-      newField.className = 'campo-horario flex items-center mb-2';
-      newField.innerHTML = `
-        <label class="mr-2">Horário:</label>
-        <input type="time" name="horarios[]" required
-          class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <span class="remove-btn ml-2" onclick="removerHorario(this)"><i class="fas fa-times"></i></span>
-      `;
-      container.insertBefore(newField, container.lastElementChild);
-    }
-
-    function removerHorario(element) {
-      element.parentElement.remove();
-    }
-
-    // Form navigation
-    function validarSessao(sessaoAtual) {
-      const errorMessages = document.getElementById('errorMessages');
-      const errorList = document.getElementById('errorList');
-      
-      errorMessages.classList.add('hidden');
-      errorList.innerHTML = '';
-      
-      let isValid = true;
-
-      // Valida campos obrigatórios gerais exceto datas e horários
-      const requiredFields = document.querySelectorAll(`#sessao${sessaoAtual} [required]:not([name="datas[]"]):not([name="dataInicio[]"]):not([name="dataFim[]"]):not([name="horarios[]"]):not([name="horaInicio"]):not([name="horaFim"])`);
-      
-      requiredFields.forEach(field => {
-        if (!field.value.trim()) {
-          isValid = false;
-          const fieldName = field.previousElementSibling ? field.previousElementSibling.textContent.trim() : 'Campo obrigatório';
-          const errorItem = document.createElement('li');
-          errorItem.textContent = `${fieldName} não preenchido`;
-          errorList.appendChild(errorItem);
-          field.classList.add('border-red-500');
-        }
-      });
-
-      // Validação específica para datas se estiver ativo
-      if (document.getElementById('temDataDefinida').value === 'Sim') {
-        const tipoData = document.querySelector('input[name="tipoData"]:checked').value;
-        
-        if (tipoData === 'unico') {
-          // Remove required de campos de intervalo
-          document.querySelectorAll('input[name="dataInicio[]"], input[name="dataFim[]"]').forEach(input => {
-            input.removeAttribute('required');
-          });
-          
-          // Verifica se pelo menos uma data única está preenchida
-          const datasUnicas = document.querySelectorAll('#dataUnica input[name="datas[]"]');
-          if (!Array.from(datasUnicas).some(d => d.value)) {
-            isValid = false;
-            const errorItem = document.createElement('li');
-            errorItem.textContent = 'Pelo menos uma data deve ser preenchida';
-            errorList.appendChild(errorItem);
-          }
-        } else {
-          // Remove required de datas únicas
-          document.querySelectorAll('input[name="datas[]"]').forEach(input => {
-            input.removeAttribute('required');
-          });
-          
-          // Valida intervalo de datas
-          const dataInicio = document.querySelector('input[name="dataInicio[]"]');
-          const dataFim = document.querySelector('input[name="dataFim[]"]');
-          
-          if (!dataInicio.value || !dataFim.value) {
-            isValid = false;
-            const errorItem = document.createElement('li');
-            errorItem.textContent = 'Data inicial e final são obrigatórias';
-            errorList.appendChild(errorItem);
-          }
-        }
-      }
-
-      // Validação específica para horários se estiver ativo
-      if (document.getElementById('temHorarioDefinido').value === 'Sim') {
-        const tipoHorario = document.querySelector('input[name="tipoHorario"]:checked').value;
-        
-        if (tipoHorario === 'unico') {
-          // Remove required de campos de intervalo
-          document.querySelector('input[name="horaInicio"]').removeAttribute('required');
-          document.querySelector('input[name="horaFim"]').removeAttribute('required');
-          
-          // Verifica se pelo menos um horário único está preenchido
-          const horariosUnicos = document.querySelectorAll('#horarioUnico input[name="horarios[]"]');
-          if (!Array.from(horariosUnicos).some(h => h.value)) {
-            isValid = false;
-            const errorItem = document.createElement('li');
-            errorItem.textContent = 'Pelo menos um horário deve ser preenchido';
-            errorList.appendChild(errorItem);
-          }
-        } else {
-          // Remove required de horários únicos
-          document.querySelectorAll('input[name="horarios[]"]').forEach(input => {
-            input.removeAttribute('required');
-          });
-          
-          // Valida intervalo de horário
-          const horaInicio = document.querySelector('input[name="horaInicio"]');
-          const horaFim = document.querySelector('input[name="horaFim"]');
-          
-          if (!horaInicio.value || !horaFim.value) {
-            isValid = false;
-            const errorItem = document.createElement('li');
-            errorItem.textContent = 'Horário inicial e final são obrigatórios';
-            errorList.appendChild(errorItem);
-          }
-        }
-      }
-
-      // Special validation for age range
-      const idadeMinima = parseInt(document.getElementById('idadeMinima').value);
-      const idadeMaxima = parseInt(document.getElementById('idadeMaxima').value);
-      if (idadeMinima > idadeMaxima) {
-        isValid = false;
-        const errorItem = document.createElement('li');
-        errorItem.textContent = 'Idade mínima não pode ser maior que idade máxima';
-        errorList.appendChild(errorItem);
-      }
-      
-      if (!isValid) {
-        errorMessages.classList.remove('hidden');
-        return;
-      }
-      
-      // If validation passes, go to next section
-      if (sessaoAtual === 1) {
-        document.getElementById('sessao1').classList.remove('active');
-        document.getElementById('sessao2').classList.add('active');
-        
-        // Check if we should show the boost warning for dates < 4 days
-        checkBoostDateWarning();
-      }
-    }
-
-    // Check if we should show boost date warning
-    function checkBoostDateWarning() {
-      const temDataDefinida = document.getElementById('temDataDefinida').value;
-      const avisoImpulsionamento4dias = document.getElementById('avisoImpulsionamento4dias');
-      
-      if (temDataDefinida === 'Sim') {
-        // Check if any date is within 4 days
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        // Check single dates
-        const datas = document.querySelectorAll('input[name="datas[]"]');
-        let showWarning = false;
-        
-        datas.forEach(dateInput => {
-          if (dateInput.value) {
-            const selectedDate = new Date(dateInput.value);
-            const diffTime = selectedDate - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays < 4) {
-              showWarning = true;
-            }
-          }
-        });
-        
-        // Check date ranges
-        const intervalos = document.querySelectorAll('.campo-intervalo');
-        intervalos.forEach(intervalo => {
-          const inicio = new Date(intervalo.querySelector('input[name="dataInicio[]"]').value);
-          const fim = new Date(intervalo.querySelector('input[name="dataFim[]"]').value);
-          
-          if (inicio) {
-            const diffTime = inicio - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays < 4) {
-              showWarning = true;
-            }
-          }
-        });
-        
-        if (showWarning) {
-          avisoImpulsionamento4dias.classList.remove('hidden');
-        } else {
-          avisoImpulsionamento4dias.classList.add('hidden');
-        }
-      } else {
-        avisoImpulsionamento4dias.classList.add('hidden');
-      }
-    }
-
-    function voltarSessao(sessao) {
-      document.getElementById('sessao1').classList.remove('active');
-      document.getElementById('sessao2').classList.remove('active');
-      
-      if (sessao === 1) {
-        document.getElementById('sessao1').classList.add('active');
-      }
-    }
-
-    // Save as PDF
-    function salvarPDF() {
-      const element = document.getElementById('vagaForm');
-      const opt = {
-        margin: 10,
-        filename: 'formulario_vaga.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-
-      // Show loading state
-      const saveBtn = document.querySelector('button[onclick="salvarPDF()"]');
-      const originalText = saveBtn.innerHTML;
-      saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Gerando PDF...';
-      saveBtn.disabled = true;
-
-      // Generate PDF
-      html2pdf().set(opt).from(element).save().then(() => {
-        // Restore button state
-        saveBtn.innerHTML = originalText;
-        saveBtn.disabled = false;
-        
-        // Show success message
-        const successMsg = document.createElement('div');
-        successMsg.className = 'bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded animate-pulse';
-        successMsg.innerHTML = `
-          <div class="flex items-start">
-            <div class="flex-shrink-0">
-              <i class="fas fa-check-circle text-green-500 text-xl mr-3 mt-1"></i>
-            </div>
-            <div>
-              <p class="font-bold text-green-800">Formulário salvo com sucesso!</p>
-              <p class="text-green-700 mt-1">O arquivo PDF foi baixado para o seu dispositivo.</p>
-            </div>
-          </div>
-        `;
-        element.parentNode.insertBefore(successMsg, element.nextSibling);
-        
-        // Remove message after 5 seconds
-        setTimeout(() => {
-          successMsg.remove();
-        }, 5000);
-      });
-    }
-
-    // Neighborhood search
-    document.getElementById('bairroSearch').addEventListener('input', function() {
-      const searchTerm = this.value.toLowerCase();
-      const options = document.querySelectorAll('select[name="bairros"] option');
-      
-      options.forEach(option => {
-        const text = option.textContent.toLowerCase();
-        if (text.includes(searchTerm) || searchTerm === '') {
-          option.style.display = '';
-        } else {
-          option.style.display = 'none';
-        }
-      });
+    elementos.presencial.addEventListener('change', (e) => {
+        const isOutro = e.target.value === 'Outro';
+        elementos.outroLugar.classList.toggle('hidden', !isOutro);
+        elementos.eventoContainer.classList.toggle('hidden', !isOutro);
+        elementos.local.required = isOutro;
     });
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-  <script src="pdfGenerator.js"></script>
+    
+    elementos.recorrente.addEventListener('change', (e) => {
+      const isRecorrente = e.target.value === 'Sim';
+      elementos.mediaMensalContainer.classList.toggle('hidden', !isRecorrente);
+      elementos.mediaMensal.required = isRecorrente;
+    });
+
+    elementos.temDataDefinida.addEventListener('change', (e) => {
+        const show = e.target.value === 'Sim';
+        elementos.datasContainer.classList.toggle('hidden', !show);
+        checkBoostDateWarning();
+    });
+
+    document.querySelectorAll('input[name="tipoData"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const isUnico = e.target.value === 'unico';
+            elementos.dataUnica.classList.toggle('hidden', !isUnico);
+            elementos.dataIntervalo.classList.toggle('hidden', isUnico);
+        });
+    });
+
+    elementos.temHorarioDefinido.addEventListener('change', (e) => {
+        const show = e.target.value === 'Sim';
+        elementos.horariosContainer.classList.toggle('hidden', !show);
+    });
+
+    document.querySelectorAll('input[name="tipoHorario"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const isUnico = e.target.value === 'unico';
+            elementos.horarioUnico.classList.toggle('hidden', !isUnico);
+            elementos.horarioIntervalo.classList.toggle('hidden', isUnico);
+        });
+    });
+
+    elementos.joinville.addEventListener('change', (e) => {
+        const isNaoJoinville = e.target.value === 'Não';
+        elementos.cidadeOutras.classList.toggle('hidden', !isNaoJoinville);
+        elementos.outraCidade.required = isNaoJoinville;
+        
+        if (elementos.sessao2.offsetParent !== null) {
+            elementos.bairrosJoinvilleContainer.classList.toggle('hidden', isNaoJoinville);
+            elementos.outrosBairrosContainer.classList.toggle('hidden', !isNaoJoinville);
+            elementos.bairros.required = !isNaoJoinville;
+            elementos.outrosBairros.required = isNaoJoinville;
+        }
+    });
+
+    elementos.impulsionar.addEventListener('change', async (e) => {
+        const impulsionar = e.target.value === 'Sim';
+        elementos.btnContinuar.style.display = impulsionar ? 'flex' : 'none';
+        elementos.btnFinalizarPDF.style.display = impulsionar ? 'none' : 'flex';
+
+        if (!impulsionar && elementos.sessao2.classList.contains('active')) {
+             const result = await Swal.fire({
+                title: 'Atenção',
+                text: 'Ao desativar o impulsionamento, os dados da Sessão 2 serão perdidos. Deseja continuar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sim, limpar',
+                cancelButtonText: 'Não, manter'
+            });
+            if (result.isConfirmed) {
+                limparSessao2();
+            } else {
+                e.target.value = 'Sim';
+                elementos.btnContinuar.style.display = 'flex';
+                elementos.btnFinalizarPDF.style.display = 'none';
+            }
+        }
+        checkBoostDateWarning();
+    });
+
+    elementos.form.querySelectorAll('input, select, textarea').forEach(input => {
+       input.addEventListener('input', (e) => {
+            if (e.target.classList.contains('invalid')) {
+                e.target.classList.remove('invalid');
+            }
+        });
+    });
+
+    elementos.whatsapp.addEventListener('input', mascaras.aplicarMascaraTelefone);
+    elementos.orcamento.addEventListener('input', mascaras.aplicarMascaraValor);
+
+    elementos.idadeMinima.addEventListener('change', () => {
+        if (parseInt(elementos.idadeMaxima.value) < parseInt(elementos.idadeMinima.value)) {
+            elementos.idadeMaxima.value = elementos.idadeMinima.value;
+        }
+    });
+     elementos.idadeMaxima.addEventListener('change', () => {
+        if (parseInt(elementos.idadeMaxima.value) < parseInt(elementos.idadeMinima.value)) {
+            elementos.idadeMinima.value = elementos.idadeMaxima.value;
+        }
+    });
+
+    window.adicionarData = () => {
+        const div = document.createElement('div');
+        div.className = 'campo-data flex items-center mb-2';
+        div.innerHTML = `
+            <label class="mr-2">Data:</label>
+            <input type="date" name="datas[]" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <span class="remove-btn ml-2" onclick="removerData(this)"><i class="fas fa-times"></i></span>
+        `;
+        elementos.datasUnicas.appendChild(div);
+    };
+    window.removerData = (el) => el.parentElement.remove();
+
+    window.adicionarIntervalo = () => {
+        const div = document.createElement('div');
+        div.className = 'campo-intervalo grid grid-cols-5 gap-2 items-center mb-2';
+        div.innerHTML = `
+            <label>De</label>
+            <input type="date" name="dataInicio[]" class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <label>até</label>
+            <input type="date" name="dataFim[]" class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <span class="remove-btn ml-2" onclick="removerIntervalo(this)"><i class="fas fa-times"></i></span>
+        `;
+        elementos.datasIntervalos.appendChild(div);
+    };
+    window.removerIntervalo = (el) => el.parentElement.remove();
+    
+    window.adicionarHorario = () => {
+        const div = document.createElement('div');
+        div.className = 'campo-horario flex items-center mb-2';
+        div.innerHTML = `
+            <label class="mr-2">Horário:</label>
+            <input type="time" name="horarios[]" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <span class="remove-btn ml-2" onclick="removerHorario(this)"><i class="fas fa-times"></i></span>
+        `;
+        elementos.horariosUnicos.appendChild(div);
+    };
+    window.removerHorario = (el) => el.parentElement.remove();
+
+    window.adicionarHorarioIntervalo = () => {
+        const div = document.createElement('div');
+        div.className = 'campo-intervalo-horario grid grid-cols-5 gap-2 items-center mb-2';
+        div.innerHTML = `
+            <label>Das</label>
+            <input type="time" name="horaInicio[]" class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <label>às</label>
+            <input type="time" name="horaFim[]" class="col-span-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <span class="remove-btn ml-2" onclick="removerHorarioIntervalo(this)"><i class="fas fa-times"></i></span>
+        `;
+        elementos.horariosIntervalos.appendChild(div);
+    };
+    window.removerHorarioIntervalo = (el) => el.parentElement.remove();
+
+
+    elementos.btnContinuar.addEventListener('click', () => {
+        if (validacao.validarSessao(1)) {
+            navigateTo('sessao2');
+            checkBoostDateWarning();
+        }
+    });
+
+    window.voltarSessao = (numSessao) => {
+        navigateTo(`sessao${numSessao}`);
+    };
+
+    elementos.btnFinalizarPDF.addEventListener('click', () => {
+        if (validacao.validarSessao(1)) {
+            enviarFormularioPorEmail();
+        }
+    });
+
+    elementos.btnSalvarPDF.addEventListener('click', () => {
+        if (validacao.validarSessao(1) && validacao.validarSessao(2)) {
+            enviarFormularioPorEmail();
+        }
+    });
+
+    function limparSessao2() {
+        elementos.sessao2.querySelectorAll('input, select').forEach(input => {
+            if(input.type === 'number' || input.type === 'text') input.value = '';
+            if(input.tagName === 'SELECT') input.selectedIndex = 0;
+            input.classList.remove('valid', 'invalid');
+        });
+        elementos.idadeMinima.value = "18";
+        elementos.idadeMaxima.value = "55";
+        elementos.dias.value = "4";
+        elementos.orcamento.value = "R$50,00";
+        elementos.genero.value = "Ambos";
+    }
+
+    function checkBoostDateWarning() {
+        let showWarning = false;
+        if (elementos.impulsionar.value === 'Sim' && elementos.temDataDefinida.value === 'Sim') {
+            const hoje = new Date();
+            const limite = new Date(hoje.setDate(hoje.getDate() + 4));
+            
+            const datas = document.querySelectorAll('input[name="datas[]"], input[name="dataInicio[]"]');
+            datas.forEach(input => {
+                if (input.value) {
+                    const dataSelecionada = new Date(input.value + "T00:00:00");
+                    if (dataSelecionada <= limite) {
+                        showWarning = true;
+                    }
+                }
+            });
+        }
+        elementos.avisoImpulsionamento.classList.toggle('hidden', !showWarning);
+        if (elementos.sessao2.classList.contains('active')) {
+            elementos.avisoImpulsionamento4dias.classList.toggle('hidden', !showWarning);
+        }
+    }
+    
+    elementos.bairroSearch.addEventListener('input', (e) => {
+        const termo = e.target.value.toLowerCase();
+        const options = elementos.bairros.options;
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            const optgroup = option.parentElement;
+            
+            const textoOpcao = option.text.toLowerCase();
+            const corresponde = textoOpcao.includes(termo);
+            option.style.display = corresponde ? '' : 'none';
+        }
+
+        const optgroups = elementos.bairros.getElementsByTagName('optgroup');
+        for (let i = 0; i < optgroups.length; i++) {
+            const optgroup = optgroups[i];
+            const opcoesVisiveis = optgroup.querySelectorAll('option[style=""]');
+            optgroup.style.display = opcoesVisiveis.length > 0 ? '' : 'none';
+        }
+    });
+
+    function enviarFormularioPorEmail() {
+        Swal.fire({
+            title: 'Preparando E-mail...',
+            text: 'Aguarde um momento.',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        const getLabelFor = (elementId) => {
+            const label = document.querySelector(`label[for="${elementId}"]`);
+            if (label) {
+                const clone = label.cloneNode(true);
+                clone.querySelectorAll('span').forEach(s => s.remove());
+                return clone.textContent.trim();
+            }
+            return elementId;
+        };
+
+        let body = "DADOS DA VAGA\n";
+        body += "-------------------------------------\n";
+
+        const fieldsSessao1 = ['analista', 'whatsapp', 'divulgaLogo', 'empresa', 'producao', 'presencial', 'local', 'evento', 'cargo', 'recorrente', 'mediaMensal', 'tipoVaga', 'vagas', 'beneficios', 'requisitos', 'turnos', 'joinville', 'outraCidade', 'notas', 'impulsionar'];
+        fieldsSessao1.forEach(id => {
+            const el = document.getElementById(id);
+            if (el && el.value) {
+                body += `${getLabelFor(id)}: ${el.value}\n`;
+            }
+        });
+
+        if(elementos.temDataDefinida.value === 'Sim') {
+            const tipoData = document.querySelector('input[name="tipoData"]:checked').value;
+             let datasStr = '';
+            if (tipoData === 'unico') {
+                const datas = [...document.querySelectorAll('input[name="datas[]"]')].map(d => d.value).filter(Boolean);
+                datasStr = datas.join(', ');
+            } else {
+                 const intervalos = [...document.querySelectorAll('#datasIntervalos .campo-intervalo')].map(i => {
+                    const start = i.querySelector('input[name="dataInicio[]"]').value;
+                    const end = i.querySelector('input[name="dataFim[]"]').value;
+                    return (start && end) ? `de ${start} até ${end}` : null;
+                }).filter(Boolean);
+                datasStr = intervalos.join('; ');
+            }
+            if(datasStr) body += `Datas Definidas: ${datasStr}\n`;
+
+        } else {
+             body += 'Datas Definidas: Não (Padrão: Segunda à Sexta)\n';
+        }
+
+         if(elementos.temHorarioDefinido.value === 'Sim') {
+            const tipoHorario = document.querySelector('input[name="tipoHorario"]:checked').value;
+            let horariosStr = '';
+            if(tipoHorario === 'unico') {
+                const horarios = [...document.querySelectorAll('input[name="horarios[]"]')].map(h => h.value).filter(Boolean);
+                horariosStr = horarios.join(', ');
+            } else {
+                 const intervalos = [...document.querySelectorAll('#horariosIntervalos .campo-intervalo-horario')].map(i => {
+                    const start = i.querySelector('input[name="horaInicio[]"]').value;
+                    const end = i.querySelector('input[name="horaFim[]"]').value;
+                    return (start && end) ? `das ${start} às ${end}` : null;
+                }).filter(Boolean);
+                horariosStr = intervalos.join('; ');
+            }
+             if(horariosStr) body += `Horários Definidos: ${horariosStr}\n`;
+         } else {
+             body += 'Horários Definidos: Não (Padrão: 7:30 às 17:00)\n';
+         }
+
+        if (elementos.impulsionar.value === 'Sim') {
+            body += "\n\nDADOS DE IMPULSIONAMENTO\n";
+            body += "-------------------------------------\n";
+            const fieldsSessao2 = ['genero', 'idadeMinima', 'idadeMaxima', 'dias', 'orcamento'];
+             fieldsSessao2.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.value) {
+                    let value = el.value;
+                    if(id === 'idadeMinima' || id === 'idadeMaxima') {
+                        value = `${el.value} anos`;
+                    }
+                   body += `${getLabelFor(id)}: ${value}\n`;
+                }
+            });
+
+             if (elementos.joinville.value === 'Sim') {
+                const bairrosSelecionados = [...elementos.bairros.selectedOptions].map(o => o.text).join(', ');
+                body += `Bairros (Joinville): ${bairrosSelecionados}\n`;
+            } else {
+                body += `Bairros (Outra Cidade): ${elementos.outrosBairros.value}\n`;
+            }
+        }
+        
+        const subject = `Requisição de Vaga: ${elementos.cargo.value || 'Nova Vaga'}`;
+        const to = "gustavo.rocha@rhbrasil.com.br,larissa.moraes@rhbrasil.com.br";
+        
+        const mailtoLink = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        
+        window.location.href = mailtoLink;
+        Swal.close();
+    }
+
+
+    updateProgress(1);
+});
+</script>
 </body>
 </html>
